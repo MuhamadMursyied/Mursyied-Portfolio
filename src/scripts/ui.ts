@@ -1,6 +1,8 @@
 // All the page interactions. Astro swaps pages without a full reload (view transitions),
 // so everything is set up again on every "astro:page-load" and torn down before the swap.
 
+import { initMission } from "./mission";
+
 type Cleanup = () => void;
 let cleanups: Cleanup[] = [];
 const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -143,6 +145,12 @@ function projectFilter() {
   if (fromUrl) apply(fromUrl);
 }
 
+// Mission control dashboard (only on the Mission page).
+function mission() {
+  const stop = initMission();
+  if (stop) cleanups.push(stop);
+}
+
 // Image gallery on a project page.
 function gallery() {
   const root = document.querySelector<HTMLElement>("[data-gallery]");
@@ -163,7 +171,7 @@ function gallery() {
 }
 
 document.addEventListener("astro:page-load", () => {
-  [reveal, clock, pointer, counters, typer, themeToggle, projectFilter, gallery].forEach((fn) => fn());
+  [reveal, clock, pointer, counters, typer, themeToggle, projectFilter, gallery, mission].forEach((fn) => fn());
 });
 document.addEventListener("astro:before-swap", () => {
   cleanups.forEach((fn) => fn());
