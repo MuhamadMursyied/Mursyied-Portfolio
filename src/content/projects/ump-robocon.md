@@ -1,0 +1,12 @@
+---
+title: "Robot build for UMP ROBOCON"
+date: "2023"
+summary: "Brainstormed and built competition robots for UMP ROBOCON, focusing on mechanical design."
+tags: ["Robotics","Mechanical design"]
+images:
+  - "images/projects/ump-robocon.jpg"
+---
+
+## Overview
+
+- Brainstormed and built robots for the UMP ROBOCON competition, working on the mechanical design.

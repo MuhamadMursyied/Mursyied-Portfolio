@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { person } from "../../data/profile";
+import { sortProjects } from "../../utils";
+
+const projects = sortProjects(await getCollection("projects", (p) => !p.data.draft));
+
+// Tags used by more than one project become filter buttons, most used first.
+const counts = new Map<string, number>();
+projects.forEach((p) => p.data.tags.forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1)));
+const tags = [...counts.entries()].filter(([, n]) => n > 1).sort((a, b) => b[1] - a[1]).map(([t]) => t);
+---
+
+<Base title={`Work · ${person.name}`} description={`Robotics, embedded and software projects by ${person.name}.`}>
+  <section class="container page">
+    <div class="section-head reveal">
+      <span class="label">Projects</span>
+      <h1 class="gradient-text">Things I have built</h1>
+      <p>Autonomous robots, embedded systems and IoT, from field robots to university builds. Pick a tag to filter.</p>
+    </div>
+    <div class="filters reveal" data-filter role="group" aria-label="Filter projects by tag">
+      {["All", ...tags].map((t, i) => <button type="button" class="chip" data-tag={t} aria-pressed={i === 0 ? "true" : "false"}>{t}</button>)}
+    </div>
+    <ul class="grid">
+      {projects.map((p, i) => <ProjectCard project={p} index={i} />)}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .page { padding-top: 120px; padding-bottom: 40px; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4rem); margin-top: 14px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+  .filters .chip { cursor: pointer; color: var(--muted); font: 500 0.88rem var(--font-body); }
+  .filters .chip[aria-pressed="true"] { color: #031018; background: linear-gradient(110deg, var(--cyan), var(--violet)); border-color: transparent; box-shadow: 0 0 24px rgba(34, 211, 238, 0.3); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; padding: 0; margin: 0; }
+</style>

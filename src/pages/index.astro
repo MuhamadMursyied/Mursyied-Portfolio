@@ -1,0 +1,196 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { certifications, focus, person, skills } from "../data/profile";
+import { sortProjects, url } from "../utils";
+
+const projects = sortProjects(await getCollection("projects", (p) => !p.data.draft));
+const allSkills = skills.flatMap((g) => g.items);
+const typedWords = allSkills.slice(0, 10).map((s) => s.name);
+const headlineWords = person.headline.split(" ");
+const half = Math.ceil(allSkills.length / 2);
+const rows = [allSkills.slice(0, half), allSkills.slice(half)];
+---
+
+<Base>
+  <!-- hero -->
+  <section class="hero container">
+    <div class="hero-text">
+      <p class="status glass reveal"><span class="dot"></span>{person.status}</p>
+      <h1 class="words" aria-label={person.headline}>
+        {headlineWords.map((w, i) => (<><span class="w gradient-text" style={`--i:${i}`} aria-hidden="true">{w}</span>{" "}</>))}
+      </h1>
+      <p class="sub reveal" style="--delay:350ms">{person.subline}</p>
+      <p class="typed-line mono reveal" style="--delay:450ms">
+        <span class="prompt">~/robotics $</span> working with <span class="typed" data-words={JSON.stringify(typedWords)}>{typedWords[0]}</span><span class="caret"></span>
+      </p>
+      <div class="actions reveal" style="--delay:550ms">
+        <a class="btn primary" href={url("work/")}>View my work <Icon name="arrow" size={17} /></a>
+        <a class="btn" href={url("about/")}>About me</a>
+      </div>
+    </div>
+
+    <aside class="id-card glass hud spot reveal" style="--delay:250ms" aria-label="Profile">
+      <div class="scan" aria-hidden="true"></div>
+      <div class="avatar-ring">
+        <img src={url(person.avatar)} alt={person.name} width="132" height="132" />
+      </div>
+      <p class="id-name">{person.name}</p>
+      <p class="id-role mono">{person.role.toUpperCase()}</p>
+      <p class="id-loc"><Icon name="pin" size={15} /> {person.location}</p>
+      <ul class="stats">
+        <li><strong data-count={projects.length}>{projects.length}</strong><span>Projects</span></li>
+        <li><strong data-count={allSkills.length}>{allSkills.length}</strong><span>Skills</span></li>
+        <li><strong data-count={certifications.length}>{certifications.length}</strong><span>Certs</span></li>
+      </ul>
+    </aside>
+  </section>
+
+  <!-- skills -->
+  <section class="section" id="skills">
+    <div class="container section-head reveal">
+      <span class="label">Tech stack</span>
+      <h2>What I work with</h2>
+    </div>
+    <div class="marquee reveal" aria-hidden="true">
+      {rows.map((row, r) => (
+        <div class:list={["track", { reverse: r === 1 }]}>
+          {[0, 1].map(() => row.map((s) => <span class="chip"><Icon name={s.icon} size={16} />{s.name}</span>))}
+        </div>
+      ))}
+    </div>
+    <div class="container">
+      <div class="skill-groups">
+        {skills.map((g) => (
+          <article class="glass spot skill-group reveal">
+            <header><h3>{g.group}</h3><span class="mono">{String(g.items.length).padStart(2, "0")}</span></header>
+            <ul>{g.items.map((s) => <li class="chip"><Icon name={s.icon} size={16} />{s.name}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- roadmap -->
+  <section class="section container">
+    <div class="section-head reveal">
+      <span class="label">Mission roadmap</span>
+      <h2>Ground, air, then water</h2>
+    </div>
+    <ol class="roadmap">
+      {focus.map((f, i) => (
+        <li class:list={["glass spot hud stage reveal", `stage-${f.stage.toLowerCase()}`]}>
+          <div class="stage-top">
+            <span class="stage-icon"><Icon name={f.icon} size={30} /></span>
+            <span class="stage-badge mono">{String(i + 1).padStart(2, "0")} · {f.stage}</span>
+          </div>
+          <h3>{f.title}</h3>
+          <p>{f.text}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- featured work -->
+  <section class="section container">
+    <div class="section-head reveal split">
+      <div>
+        <span class="label">Selected work</span>
+        <h2>Things I have built</h2>
+      </div>
+      <a class="btn" href={url("work/")}>All {projects.length} projects <Icon name="arrow" size={17} /></a>
+    </div>
+    <ul class="project-grid">
+      {projects.slice(0, 3).map((p, i) => <ProjectCard project={p} index={i} />)}
+    </ul>
+  </section>
+
+  <!-- contact -->
+  <section class="section container">
+    <div class="cta glass hud reveal">
+      <span class="label">Contact</span>
+      <h2 class="gradient-text">Let's build something that moves.</h2>
+      <p class="muted">Interested in robotics, autonomous vehicles or a collaboration? I'm happy to talk.</p>
+      <a class="btn primary" href={`mailto:${person.email}`}><Icon name="mail" size={17} /> {person.email}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; min-height: 100vh; padding-top: 110px; padding-bottom: 60px; }
+  .status { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; font-size: 0.85rem; color: var(--muted); margin-bottom: 26px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 12px #34d399; }
+  h1 { font-size: clamp(2.8rem, 7vw, 5.2rem); line-height: 1; letter-spacing: -0.04em; margin-bottom: 26px; }
+  .sub { font-size: clamp(1.05rem, 1.8vw, 1.25rem); color: var(--muted); max-width: 54ch; }
+  .typed-line { font-size: 0.95rem; color: var(--muted); margin: 6px 0 30px; }
+  .prompt { color: var(--violet); }
+  .typed { color: var(--text); font-weight: 500; }
+  .caret { display: inline-block; width: 0.55em; height: 1.1em; vertical-align: -0.2em; margin-left: 3px; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .id-card { padding: 34px 28px 26px; text-align: center; overflow: hidden; }
+  .scan {
+    position: absolute; left: 0; right: 0; top: -40%; height: 40%; pointer-events: none;
+    background: linear-gradient(180deg, transparent, rgba(34, 211, 238, 0.12), transparent);
+    animation: scan 5s linear infinite;
+  }
+  @keyframes scan { to { top: 100%; } }
+  .avatar-ring { position: relative; width: 148px; height: 148px; margin: 0 auto 18px; padding: 8px; border-radius: 50%; isolation: isolate; }
+  .avatar-ring::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 50%;
+    background: conic-gradient(from var(--angle, 0deg), var(--cyan), transparent 30%, var(--violet) 55%, transparent 80%, var(--cyan));
+    animation: spin 6s linear infinite;
+    -webkit-mask: radial-gradient(circle, transparent 66px, #000 67px); mask: radial-gradient(circle, transparent 66px, #000 67px);
+  }
+  @property --angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  @keyframes spin { to { --angle: 360deg; } }
+  .avatar-ring img { width: 132px; height: 132px; border-radius: 50%; object-fit: cover; }
+  .id-name { font: 600 1.35rem var(--font-head); margin: 0; }
+  .id-role { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.16em; margin: 6px 0 10px; }
+  .id-loc { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.9rem; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; list-style: none; padding: 18px 0 0; margin: 12px 0 0; border-top: 1px solid var(--glass-border); }
+  .stats li { display: flex; flex-direction: column; }
+  .stats strong { font: 700 1.9rem/1.1 var(--font-head); color: var(--text); font-variant-numeric: tabular-nums; text-shadow: 0 0 20px rgba(34, 211, 238, 0.35); }
+  .stats span { font: 500 0.7rem var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+  .marquee { display: grid; gap: 12px; overflow: hidden; padding: 6px 0 40px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .track { display: flex; gap: 12px; width: max-content; animation: slide 50s linear infinite; }
+  .track.reverse { animation-direction: reverse; animation-duration: 60s; }
+  .marquee:hover .track { animation-play-state: paused; }
+  @keyframes slide { to { transform: translateX(calc(-50% - 6px)); } }
+
+  .skill-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .skill-group { padding: 22px; }
+  .skill-group header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
+  .skill-group h3 { font-size: 1.05rem; }
+  .skill-group header span { color: var(--accent); font-size: 0.8rem; }
+  .skill-group ul { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+  .skill-group .chip { font-size: 0.85rem; padding: 7px 12px; }
+
+  .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; list-style: none; padding: 0; margin: 0; }
+  .stage { padding: 28px; }
+  .stage-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .stage-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; color: var(--accent); background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.25); box-shadow: 0 0 24px rgba(34, 211, 238, 0.15); }
+  .stage-badge { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .stage-now .stage-badge { color: #34d399; }
+  .stage-next .stage-icon { color: var(--violet); border-color: rgba(167, 139, 250, 0.3); background: rgba(167, 139, 250, 0.08); box-shadow: 0 0 24px rgba(167, 139, 250, 0.15); }
+  .stage-future { opacity: 0.85; border-style: dashed; }
+  .stage-future .stage-icon { color: var(--pink); border-color: rgba(244, 114, 182, 0.3); background: rgba(244, 114, 182, 0.08); box-shadow: none; }
+  .stage h3 { font-size: 1.3rem; margin-bottom: 8px; }
+  .stage p { color: var(--muted); margin: 0; }
+
+  .split { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; padding: 0; margin: 0; }
+
+  .cta { padding: clamp(32px, 6vw, 64px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; overflow: hidden; }
+  .cta h2 { font-size: clamp(2rem, 5vw, 3.4rem); }
+  .cta p { margin: 0 0 10px; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 96px; gap: 36px; }
+    .roadmap { grid-template-columns: 1fr; }
+  }
+</style>
