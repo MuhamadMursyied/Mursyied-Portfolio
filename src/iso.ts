@@ -1,32 +1,10 @@
-// Layout and drawing helpers for the Mission control page.
-// Units are metres on the ground, drawn in a 2:1 isometric view.
-// The layout is illustrative: it shows how my coverage missions run, not a real field.
+// Isometric drawing helpers shared by the "My world" map (build time) and its script (browser).
+// Ground units are drawn in a 2:1 isometric view; z is height in pixels.
 
 export const TILE_W = 64;
 export const TILE_H = 32;
 
 export type Vec = { x: number; y: number };
-export type Waypoint = Vec & { id: number; lane: number };
-
-export const HOME: Vec = { x: 0, y: 7 };
-export const TABLET: Vec = { x: -2.8, y: 10.4 };
-export const FIELD = { x0: 1, x1: 23, y0: 0, y1: 14 };
-export const POND = { x: 21.7, y: 11.6, r: 1.8 };
-export const TERRAIN = { x0: -7, x1: 26, y0: -4, y1: 18 };
-
-// Six lanes driven back and forth (boustrophedon). The last two stop short of the pond.
-const LANES = [2, 4, 6, 8, 10, 12];
-export const LANE_COUNT = LANES.length;
-export const waypoints: Waypoint[] = [];
-LANES.forEach((y, lane) => {
-  const xs: number[] = [];
-  for (let x = 3; x <= (y >= 10 ? 19 : 21); x += 2) xs.push(x);
-  if (lane % 2) xs.reverse();
-  xs.forEach((x) => waypoints.push({ id: waypoints.length + 1, x, y, lane: lane + 1 }));
-});
-
-// Home → 58 waypoints → home.
-export const route: Vec[] = [HOME, ...waypoints, HOME];
 
 export function iso(x: number, y: number, z = 0): [number, number] {
   return [((x - y) * TILE_W) / 2, ((x + y) * TILE_H) / 2 - z];
@@ -57,4 +35,28 @@ export function box(cx: number, cy: number, heading: number, halfL: number, half
     svg += polygon([[a[0], a[1], z0], [b[0], b[1], z0], [b[0], b[1], z1], [a[0], a[1], z1]], `${cls}-${nx > ny ? "r" : "l"}`);
   }
   return svg + polygon(corners.map(([x, y]) => [x, y, z1]), `${cls}-t`);
+}
+
+// A small UGV (dark chassis, light electronics deck, sensor mast) at (x, y) facing `heading`.
+export function robot(x: number, y: number, heading: number, size = 1) {
+  const c = Math.cos(heading);
+  const s = Math.sin(heading);
+  const local = (u: number, v: number): Vec => ({ x: x + (u * c - v * s) * size, y: y + (u * s + v * c) * size });
+  const k = size;
+  const [gx, gy] = iso(x, y);
+  const wheels = [local(0.62, 0.6), local(0.62, -0.6), local(-0.62, 0.6), local(-0.62, -0.6)];
+  const wheel = (w: Vec) => box(w.x, w.y, heading, 0.27 * k, 0.12 * k, 0, 13 * k, "rw");
+  const mast = local(-0.4, 0);
+  const lamp = local(0.86, 0);
+  const [ax, ay] = iso(mast.x, mast.y, 48 * k);
+  return (
+    `<ellipse class="r-shadow" cx="${gx}" cy="${gy}" rx="${50 * k}" ry="${25 * k}"/>` +
+    wheels.filter((w) => w.x + w.y < x + y).map(wheel).join("") +
+    box(x, y, heading, 0.95 * k, 0.62 * k, 5 * k, 19 * k, "rb") +
+    wheels.filter((w) => w.x + w.y >= x + y).map(wheel).join("") +
+    box(x, y, heading, 0.62 * k, 0.46 * k, 19 * k, 29 * k, "rd") +
+    box(lamp.x, lamp.y, heading, 0.05 * k, 0.4 * k, 19 * k, 21 * k, "rl") +
+    box(mast.x, mast.y, heading, 0.07 * k, 0.07 * k, 29 * k, 46 * k, "rm") +
+    `<circle class="r-ant" cx="${ax.toFixed(1)}" cy="${ay.toFixed(1)}" r="${4.5 * k}"/>`
+  );
 }

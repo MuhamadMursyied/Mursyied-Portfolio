@@ -21,7 +21,6 @@ const nav = [
   { href: "", label: "Home", icon: "home", active: path === "/" },
   { href: "about/", label: "About", icon: "user", active: path.startsWith("/about") },
   { href: "work/", label: "Work", icon: "grid", active: path.startsWith("/work") },
-  { href: "mission/", label: "Mission", icon: "radar", active: path.startsWith("/mission") },
 ];
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(url(image), Astro.site);

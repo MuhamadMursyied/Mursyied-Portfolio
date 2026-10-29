@@ -1,6 +1,6 @@
 # Mursyied · Portfolio
 
-My personal portfolio as a robotics software engineer working on autonomous ground robots with ROS 2. A futuristic glass design with Home, About, Work and Mission control pages, a page per project, smooth page transitions, a live Kuala Lumpur clock, and dark and light modes.
+My personal portfolio as a robotics software engineer working on autonomous ground robots with ROS 2. A futuristic glass design with Home, About and Work pages, an interactive isometric "my world" map on Home, a page per project, smooth page transitions, a live Kuala Lumpur clock, and dark and light modes.
 
 **Live:** https://mursyied-portfolio.vercel.app
 
@@ -30,7 +30,7 @@ npm run dev        # http://localhost:4321/Mursyied-Portfolio
 | Images | `public/images/` |
 | Colours and the glass look | `src/styles/global.css` (variables at the top) |
 | Animations and interactions | `src/scripts/ui.ts` |
-| Mission control replay (map, route, panels) | `src/pages/mission.astro`, `src/data/mission.ts`, `src/scripts/mission.ts` |
+| "My world" map on Home (buildings and what's inside) | `src/data/world.ts`, `src/components/World.astro`, `src/scripts/world.ts` |
 | Icons | `src/components/Icon.astro` (brand icons from simple-icons, outline icons from Tabler) |
 
 ### Add a project
