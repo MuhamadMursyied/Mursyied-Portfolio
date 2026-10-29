@@ -10,12 +10,14 @@ interface Props {
   description?: string;
   image?: string;
   footer?: boolean;
+  hud?: boolean; // the page shows its own clock and location, so the top bar only keeps the menu
 }
 const {
   title = `${person.name} · Robotics Engineer`,
   description = "Mechatronics engineer building software for unmanned ground vehicles with ROS 2.",
   image = "images/og/home.jpg",
   footer = true,
+  hud = false,
 } = Astro.props;
 
 const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ""), "") || "/";
@@ -72,7 +74,7 @@ const year = new Date().getFullYear();
       <div class="noise"></div>
     </div>
 
-    <header class="topbar">
+    <header class:list={["topbar", { "hud-page": hud }]}>
       <div class="topbar-side mono">
         <span class="live-dot"></span>
         <span class="hide-s">{person.timeZone.replace("_", " ")}</span>
@@ -134,6 +136,8 @@ const year = new Date().getFullYear();
   }
   .topbar-side { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; }
   .topbar-side.right { justify-content: flex-end; }
+  .topbar.hud-page .topbar-side { visibility: hidden; }
+  .topbar.hud-page::before { display: none; }
   .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 12px #34d399; animation: pulse 2s ease-in-out infinite; }
   @keyframes pulse { 50% { opacity: 0.4; } }
   .nav { display: flex; align-items: center; gap: 2px; padding: 5px; border-radius: 999px; }

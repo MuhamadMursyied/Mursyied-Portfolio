@@ -7,6 +7,11 @@ import { districts } from "../data/world";
 import { person } from "../data/profile";
 import { url } from "../utils";
 
+interface Props {
+  bare?: boolean; // full-screen use: no card around the map, the page draws its own overlays
+}
+const { bare = false } = Astro.props;
+
 const RADIUS = 6.5;
 const GROUND = 9.5;
 const COLORS: Record<string, string> = {
@@ -168,7 +173,7 @@ const slab =
 ---
 
 <div class="world" data-world aria-label="My world">
-  <div class="world-map glass hud reveal">
+  <div class:list={["world-map", bare ? "bare" : "glass hud reveal"]}>
     <svg viewBox="-620 -410 1240 760" preserveAspectRatio="xMidYMid slice" role="img" aria-label={`${person.firstName} in the middle, with six buildings around: ${districts.map((d) => d.name).join(", ")}`}>
       <defs>
         <clipPath id="me-clip"><circle r="30" /></clipPath>
@@ -212,7 +217,7 @@ const slab =
         </g>
       </g></g>
     </svg>
-    <p class="world-hint mono">Click a building to explore</p>
+    {!bare && <p class="world-hint mono">Click a building to explore</p>}
   </div>
 </div>
 
@@ -232,6 +237,7 @@ const slab =
   }
   .world-map { position: relative; padding: 0; overflow: hidden; height: 100%; }
   .world-map svg { display: block; width: 100%; height: 100%; }
+  .world-map.bare { overflow: visible; }
   .world-hint { position: absolute; left: 18px; bottom: 14px; margin: 0; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 
   .world .slab-t { fill: var(--w-slab-t); stroke: var(--glass-border); }
