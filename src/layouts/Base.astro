@@ -20,6 +20,7 @@ const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, 
 const nav = [
   { href: "", label: "Home", icon: "home", active: path === "/" },
   { href: "about/", label: "About", icon: "user", active: path.startsWith("/about") },
+  { href: "skills/", label: "Skills", icon: "gauge", active: path.startsWith("/skills") },
   { href: "work/", label: "Work", icon: "grid", active: path.startsWith("/work") },
 ];
 const canonical = new URL(Astro.url.pathname, Astro.site);
