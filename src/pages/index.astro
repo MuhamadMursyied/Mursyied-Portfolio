@@ -93,6 +93,19 @@ const rows = [allSkills.slice(0, half), allSkills.slice(half)];
     </ol>
   </section>
 
+  <!-- mission control teaser -->
+  <section class="section container">
+    <a class="mission-teaser glass hud spot reveal" href={url("mission/")}>
+      <div class="mission-text">
+        <span class="label">Mission control</span>
+        <h2>Watch a field mission run</h2>
+        <p class="muted">An interactive replay of how I send the Hunter SE through a 58-point coverage route with one tap, from the tablet app down to Nav2.</p>
+        <span class="btn primary">Open mission control <Icon name="arrow" size={17} /></span>
+      </div>
+      <img src={url("images/mission-preview.jpg")} alt="Mission control dashboard with the robot driving a coverage route" width="1080" height="801" loading="lazy" />
+    </a>
+  </section>
+
   <!-- featured work -->
   <section class="section container">
     <div class="section-head reveal split">
@@ -182,6 +195,12 @@ const rows = [allSkills.slice(0, half), allSkills.slice(half)];
   .stage h3 { font-size: 1.3rem; margin-bottom: 8px; }
   .stage p { color: var(--muted); margin: 0; }
 
+  .mission-teaser { display: grid; grid-template-columns: 1fr 1.3fr; gap: 32px; align-items: center; padding: 32px; text-decoration: none; overflow: hidden; }
+  .mission-text h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); margin: 14px 0 12px; }
+  .mission-text p { margin-bottom: 22px; }
+  .mission-teaser img { width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--glass-border); transition: transform 0.5s; }
+  .mission-teaser:hover img { transform: scale(1.02); }
+
   .split { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
   .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; padding: 0; margin: 0; }
 
@@ -192,5 +211,6 @@ const rows = [allSkills.slice(0, half), allSkills.slice(half)];
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 96px; gap: 36px; }
     .roadmap { grid-template-columns: 1fr; }
+    .mission-teaser { grid-template-columns: 1fr; padding: 22px; }
   }
 </style>
