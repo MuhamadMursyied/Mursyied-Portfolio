@@ -26,6 +26,7 @@ import { bold, url } from "../utils";
         <a href="#studies">Studies</a>
         <a href="#certifications">Certifications</a>
         <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
       </nav>
     </aside>
 
@@ -97,6 +98,13 @@ import { bold, url } from "../utils";
           ))}
         </div>
       </section>
+
+      <section id="contact" class="contact glass hud reveal">
+        <span class="label">Contact</span>
+        <h2 class="gradient-text">Let's build something that moves.</h2>
+        <p class="muted">Interested in robotics, autonomous vehicles or a collaboration? I'm happy to talk.</p>
+        <a class="btn primary" href={`mailto:${person.email}`}><Icon name="mail" size={17} /> {person.email}</a>
+      </section>
     </div>
   </div>
 </Base>
@@ -118,6 +126,9 @@ import { bold, url } from "../utils";
   .toc a:hover { color: var(--text); border-color: var(--accent); }
 
   .content { display: grid; gap: 72px; min-width: 0; }
+  .contact { padding: clamp(28px, 5vw, 48px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .contact h2 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); }
+  .contact p { margin: 0 0 8px; }
   section { scroll-margin-top: 90px; }
   section > h2 { font-size: clamp(1.7rem, 3.4vw, 2.3rem); margin: 12px 0 24px; }
   h2.big { font-size: clamp(2.4rem, 6vw, 3.8rem); margin: 14px 0 22px; }

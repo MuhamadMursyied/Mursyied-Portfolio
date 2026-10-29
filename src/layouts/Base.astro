@@ -9,11 +9,13 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  footer?: boolean;
 }
 const {
   title = `${person.name} · Robotics Engineer`,
   description = "Mechatronics engineer building software for unmanned ground vehicles with ROS 2.",
   image = "images/og/home.jpg",
+  footer = true,
 } = Astro.props;
 
 const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ""), "") || "/";
@@ -99,7 +101,7 @@ const year = new Date().getFullYear();
       <slot />
     </main>
 
-    <footer class="footer container">
+    {footer && <footer class="footer container">
       <p class="mono">© {year} {person.name} · Built with Astro</p>
       <div class="footer-links">
         {
@@ -110,7 +112,7 @@ const year = new Date().getFullYear();
           ))
         }
       </div>
-    </footer>
+    </footer>}
 
     <script>
       import "../scripts/ui.ts";
