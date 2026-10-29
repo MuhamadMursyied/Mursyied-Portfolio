@@ -1,12 +1,15 @@
 ---
 title: "Outdoor environment monitoring with IoT"
 date: "2021"
-summary: "An IoT system with a web page to control it and observe outdoor conditions."
-tags: ["IoT","Web"]
+summary: "An HTML web interface that controls Arduino sensors and shows temperature, humidity and motion in real time."
+tags: ["IoT", "Web"]
 images:
-  - "images/projects/outdoor-iot-monitoring.jpg"
+  - "images/projects/outdoor-iot-monitoring-1.jpg"
+  - "images/projects/outdoor-iot-monitoring-2.jpg"
+  - "images/projects/outdoor-iot-monitoring-3.jpg"
 ---
 
 ## Overview
 
-- Built a website in HTML to control the system and observe the outdoor environment.
+- Built an **HTML web interface** to control the system.
+- Read **temperature, humidity and motion** sensors on an **Arduino** in real time.

@@ -23,7 +23,8 @@ export const socials = [
 // Paragraphs for the About page. **bold** is supported.
 export const intro = [
   "I'm a robotics software engineer who makes **autonomous ground robots work reliably in real outdoor conditions**. I take robot software from simulation to field deployment, solve problems under tight test schedules, and work with cross-functional teams to deliver complete robot systems.",
-  "At **MIMOS Berhad** I look after the navigation system of the Hunter SE robot, fusing GNSS, IMU and wheel odometry for accurate positioning, and I build the software that runs whole field missions from a single command. Before that I did UGV R&D for plantation applications at **SD Guthrie**.",
+  "At **MIMOS Berhad** I look after the navigation system of the Hunter SE robot, fusing GNSS, IMU and wheel odometry for accurate positioning, and I build the software that runs whole field missions from a single command. Before that, at **SD Guthrie**, I worked on plantation UGVs: hardware integration on a Husky, the comms and LoRa-controlled Autobin for an autonomous fertiliser-spreading system, and a modular redesign of the Timmy UGV.",
+  "Outside work I keep learning: training **YOLOv11** to count palm crowns and getting a **Livox Mid-360 LiDAR** running on ROS 2 for localization and sensor fusion.",
   "I graduated in Mechatronic Engineering with Honours from **Universiti Malaysia Pahang Al-Sultan Abdullah (UMPSA)**, in a collaboration programme with Hochschule Karlsruhe (HKA), Germany, so my background covers the whole stack: mechanical design, electronics, embedded systems and software.",
 ];
 
@@ -53,6 +54,7 @@ export const experience = [
     current: true,
     points: [
       "Enabled autonomous outdoor operation of the Hunter SE robot: managed its navigation system and fused GPS, motion sensors and wheel data for accurate positioning, taking each change from simulation to field deployment.",
+      "Bring up sensor drivers when new hardware arrives, and debug problems down to the real cause instead of patching them.",
       "Automated end-to-end robot missions: software that runs a 58-point field coverage route from a single command, plus a tablet control app for operators to monitor, drive and manage missions.",
     ],
     tags: ["ROS 2", "Nav2", "EKF", "GNSS", "Gazebo", "NVIDIA Jetson", "FastAPI", "React"],
@@ -63,10 +65,11 @@ export const experience = [
     place: "Carey Island, Selangor",
     period: "From Jul 2025",
     points: [
-      "R&D on UGV development for plantation applications.",
-      "Integrated sensors, controllers and communication modules into the machine and verified operation during field testing.",
+      "Husky development UGV: installed and integrated new hardware, made mechanical modifications and 3D-printed mounts for sensors and accessories, and set up cameras for teleoperation.",
+      "ROC & Autobin: autonomous UGV for fertiliser spreading (target 100 hectares a week). Range-tested a TVWS comms system, improved signal stability, piloted the UGV in the field and built LoRa control for the Autobin from the Remote Operating Center.",
+      "Timmy: redesigning a UGV with an integrated PCB into a modular platform for easy hardware swaps, learning and testing.",
     ],
-    tags: ["UGV", "Sensor integration", "Field testing"],
+    tags: ["UGV", "Husky", "LoRa", "TVWS", "3D printing", "Field testing"],
   },
   {
     company: "DreamEDGE",
@@ -90,6 +93,7 @@ export const studies = [
       "CGPA 3.44",
       "Collaboration programme with Hochschule Karlsruhe (HKA), Germany",
       "Facilitator, IEM UMPSS × UMPBOT Back to Basic Robotics Workshop (2022)",
+      "Facilitator, IEM Club Engineering Treasure Hunt (about 150 participants)",
     ],
   },
   {
@@ -121,12 +125,20 @@ export const skills = [
       { name: "Gazebo", icon: "cube" },
       { name: "RViz", icon: "eye" },
       { name: "URDF", icon: "ugv" },
+      { name: "YOLOv11", icon: "ultralytics" },
+      { name: "Roboflow", icon: "roboflow" },
     ],
   },
   {
     group: "Hardware",
     items: [
-      { name: "LiDAR", icon: "radar" },
+      { name: "Livox Mid-360 LiDAR", icon: "radar" },
+      { name: "Arduino", icon: "arduino" },
+      { name: "LoRa", icon: "iot" },
+      { name: "TVWS comms", icon: "satellite" },
+      { name: "NI-DAQ", icon: "gauge" },
+      { name: "FPGA DE10", icon: "chip" },
+      { name: "3D printing", icon: "creality" },
       { name: "Cameras", icon: "camera" },
       { name: "GNSS/INS", icon: "satellite" },
       { name: "IMU", icon: "gauge" },
@@ -152,6 +164,12 @@ export const skills = [
       { name: "WebSocket", icon: "socketdotio" },
       { name: "Linux (Ubuntu)", icon: "ubuntu" },
       { name: "Git", icon: "git" },
+      { name: "Qt Creator", icon: "qt" },
+      { name: "VS Code", icon: "terminal" },
+      { name: "Code::Blocks", icon: "terminal" },
+      { name: "Google Colab", icon: "googlecolab" },
+      { name: "ThingsBoard", icon: "chart" },
+      { name: "Microsoft 365", icon: "doc" },
     ],
   },
   {
@@ -161,7 +179,14 @@ export const skills = [
       { name: "Fusion 360", icon: "autodesk" },
       { name: "MATLAB", icon: "chart" },
       { name: "LabVIEW", icon: "labview" },
-      { name: "PLC", icon: "plc" },
+      { name: "SolidWorks", icon: "dassaultsystemes" },
+      { name: "AutoCAD", icon: "autocad" },
+      { name: "Ansys", icon: "ansys" },
+      { name: "Quartus Prime", icon: "intel" },
+      { name: "Fritzing", icon: "chip" },
+      { name: "Visual Components", icon: "factory" },
+      { name: "IndraWorks (ctrlX)", icon: "plc" },
+      { name: "FPWIN Pro 7", icon: "plc" },
     ],
   },
 ];

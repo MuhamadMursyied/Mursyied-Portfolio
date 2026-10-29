@@ -18,7 +18,7 @@ const tags = [...counts.entries()].filter(([, n]) => n > 1).sort((a, b) => b[1] 
     <div class="section-head reveal">
       <span class="label">Projects</span>
       <h1 class="gradient-text">Things I have built</h1>
-      <p>Autonomous robots, embedded systems and IoT, from field robots to university builds. Pick a tag to filter.</p>
+      <p>Autonomous robots, embedded systems and IoT, from field robots to university builds, plus the trainings and workshops I joined or ran. Pick a tag to filter.</p>
     </div>
     <div class="filters reveal" data-filter role="group" aria-label="Filter projects by tag">
       {["All", ...tags].map((t, i) => <button type="button" class="chip" data-tag={t} aria-pressed={i === 0 ? "true" : "false"}>{t}</button>)}
