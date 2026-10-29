@@ -1,0 +1,494 @@
+---
+// "My world": an isometric map with me in the middle and one building per part of what I do.
+// Buildings are drawn here at build time; src/scripts/world.ts handles clicks and the little robot.
+import { getCollection } from "astro:content";
+import Icon from "./Icon.astro";
+import { box, iso, polygon } from "../iso";
+import { districts } from "../data/world";
+import { certifications, competencies, experience, person, skills, studies } from "../data/profile";
+import { projectMeta, url } from "../utils";
+
+const RADIUS = 6.5;
+const GROUND = 9.5;
+const COLORS: Record<string, string> = {
+  robotics: "#22d3ee",
+  career: "#a78bfa",
+  iot: "#34d399",
+  electronics: "#f59e0b",
+  software: "#f472b6",
+  academy: "#60a5fa",
+};
+
+const projects = await getCollection("projects", (p) => !p.data.draft);
+const allSkills = skills.flatMap((g) => g.items);
+const skillIcon = (name: string) => allSkills.find((s) => s.name === name)?.icon ?? "cube";
+const place = (angle: number, r = RADIUS) => ({ x: r * Math.cos((angle * Math.PI) / 180), y: r * Math.sin((angle * Math.PI) / 180) });
+const fmt = (n: number) => n.toFixed(1);
+
+// ---------- building shapes ----------
+// Each returns the SVG and the roof height (for the label). Walls use bw-*, the district colour is --c.
+
+// a rectangle on the front-left (+y) wall, from x = cx+u0 to cx+u1
+const wallL = (cx: number, cy: number, hw: number, u0: number, u1: number, z0: number, z1: number, cls: string) =>
+  polygon([[cx + u0, cy + hw, z0], [cx + u1, cy + hw, z0], [cx + u1, cy + hw, z1], [cx + u0, cy + hw, z1]], cls);
+// a rectangle on the front-right (+x) wall, from y = cy+v0 to cy+v1
+const wallR = (cx: number, cy: number, hl: number, v0: number, v1: number, z0: number, z1: number, cls: string) =>
+  polygon([[cx + hl, cy + v0, z0], [cx + hl, cy + v1, z0], [cx + hl, cy + v1, z1], [cx + hl, cy + v0, z1]], cls);
+
+const shapes = {
+  lab(cx: number, cy: number) {
+    let s = box(cx, cy, 0, 2.3, 1.7, 0, 50, "bw");
+    s += wallL(cx, cy, 1.7, -1.6, 0.6, 0, 32, "door");
+    for (let i = 0; i < 4; i++) s += wallL(cx, cy, 1.7, -1.6 + i * 0.55, -1.6 + i * 0.55 + 0.04, 0, 32, "door-line");
+    s += wallR(cx, cy, 2.3, -1.3, 1.3, 30, 40, "win");
+    s += box(cx, cy, 0, 2.3, 0.35, 50, 56, "acc");
+    return { svg: s, top: 56 };
+  },
+  tower(cx: number, cy: number) {
+    let s = box(cx, cy, 0, 1.3, 1.3, 0, 160, "bw");
+    for (let z = 16; z < 150; z += 18) {
+      for (let i = 0; i < 3; i++) {
+        s += wallL(cx, cy, 1.3, -1.05 + i * 0.75, -1.05 + i * 0.75 + 0.5, z, z + 9, "win");
+        s += wallR(cx, cy, 1.3, -1.05 + i * 0.75, -1.05 + i * 0.75 + 0.5, z, z + 9, "win dim");
+      }
+    }
+    s += box(cx, cy, 0, 1.0, 1.0, 160, 170, "acc");
+    s += box(cx, cy, 0, 0.06, 0.06, 170, 200, "mast");
+    const [ax, ay] = iso(cx, cy, 202);
+    s += `<circle class="beacon" cx="${fmt(ax)}" cy="${fmt(ay)}" r="4"/>`;
+    return { svg: s, top: 205 };
+  },
+  antenna(cx: number, cy: number) {
+    let s = box(cx - 0.6, cy + 0.4, 0, 1.0, 1.0, 0, 30, "bw");
+    s += wallL(cx - 0.6, cy + 0.4, 1.0, -0.4, 0.3, 0, 20, "door");
+    s += box(cx + 0.9, cy - 0.8, 0, 0.42, 0.42, 0, 8, "bw");
+    s += box(cx + 0.9, cy - 0.8, 0, 0.1, 0.1, 8, 175, "mast");
+    for (const z of [50, 90, 130]) s += box(cx + 0.9, cy - 0.8, 0, 0.3, 0.3, z, z + 4, "acc");
+    const [ax, ay] = iso(cx + 0.9, cy - 0.8, 178);
+    s += `<g transform="translate(${fmt(ax)} ${fmt(ay)})"><ellipse class="sig" rx="34" ry="17"/><ellipse class="sig two" rx="34" ry="17"/><circle class="beacon" r="5"/></g>`;
+    return { svg: s, top: 190 };
+  },
+  workshop(cx: number, cy: number) {
+    const hl = 2.3;
+    const hw = 1.6;
+    let s = box(cx, cy, 0, hl, hw, 0, 36, "bw");
+    s += wallL(cx, cy, hw, -1.9, -0.7, 0, 26, "door");
+    s += wallR(cx, cy, hl, -1.2, 1.2, 14, 24, "win");
+    const w = (2 * hl) / 3;
+    for (let i = 0; i < 3; i++) {
+      const x0 = cx - hl + i * w;
+      const x1 = x0 + w;
+      s += polygon([[x0, cy - hw, 36], [x0, cy + hw, 36], [x1, cy + hw, 58], [x1, cy - hw, 58]], "bw-t");
+      s += polygon([[x1, cy - hw, 36], [x1, cy + hw, 36], [x1, cy + hw, 58], [x1, cy - hw, 58]], "win");
+    }
+    return { svg: s, top: 60 };
+  },
+  studio(cx: number, cy: number) {
+    let s = box(cx, cy, 0, 1.9, 1.5, 0, 74, "bw");
+    s += wallL(cx, cy, 1.5, -1.6, 1.6, 20, 66, "screen");
+    [[0.0, 1.6], [0.35, 2.4], [0.35, 1.2], [0.0, 2.0], [0.7, 2.6], [0.35, 1.5]].forEach(([indent, len], i) => {
+      const z = 58 - i * 6.5;
+      s += wallL(cx, cy, 1.5, -1.4 + indent, -1.4 + indent + len, z, z + 2.6, i % 2 ? "code alt" : "code");
+    });
+    s += wallR(cx, cy, 1.9, -1.2, 1.2, 0, 26, "door");
+    s += wallR(cx, cy, 1.9, -1.2, 1.2, 36, 62, "win dim");
+    s += box(cx, cy, 0, 1.9, 1.5, 74, 78, "acc");
+    return { svg: s, top: 80 };
+  },
+  academy(cx: number, cy: number) {
+    let s = box(cx, cy - 0.3, 0, 2.2, 1.3, 0, 40, "bw");
+    s += wallL(cx, cy - 0.3, 1.3, -0.4, 0.4, 0, 26, "door");
+    for (const u of [-1.9, -1.2, -0.6, 0.6, 1.2, 1.9]) s += box(cx + u, cy + 1.45, 0, 0.11, 0.11, 0, 40, "col");
+    s += box(cx, cy + 0.15, 0, 2.4, 1.75, 40, 46, "bw");
+    const x0 = cx - 2.4;
+    const x1 = cx + 2.4;
+    const y0 = cy - 1.6;
+    const y1 = cy + 1.9;
+    const ym = (y0 + y1) / 2;
+    s += polygon([[x0, y1, 46], [x1, y1, 46], [x1, ym, 74], [x0, ym, 74]], "roof");
+    s += polygon([[x1, y0, 46], [x1, y1, 46], [x1, ym, 74]], "bw-r");
+    s += polygon([[x1, y0 + 1.1, 52], [x1, y1 - 1.1, 52], [x1, ym, 66]], "acc-r");
+    return { svg: s, top: 78 };
+  },
+};
+
+// ---------- the map ----------
+type Piece = { depth: number; svg: string };
+const pieces: Piece[] = [];
+let roads = "";
+
+const counts: Record<string, number> = {};
+const tagAt: Record<string, string> = {};
+districts.forEach((d) => {
+  const { x, y } = place(d.angle);
+  const { svg, top } = shapes[d.shape](x, y);
+  counts[d.id] =
+    (d.experience?.length ?? 0) + (d.projects?.length ?? 0) + (d.studies ? studies.length : 0) + (d.certifications ? certifications.length : 0);
+  const pad = polygon([[x - 3, y - 2.6], [x + 3, y - 2.6], [x + 3, y + 2.6], [x - 3, y + 2.6]], "pad");
+  // buildings in front of me get their name under them, so it doesn't cover me
+  const front = x + y > 3;
+  const [lx, ly] = front ? iso(x + 2.7, y + 2.7, -26) : iso(x, y, top + 34);
+  tagAt[d.id] = `translate(${fmt(lx)} ${fmt(ly)})`;
+  const [sx, sy] = iso(0, 0);
+  const [ex, ey] = iso(x * 0.62, y * 0.62);
+  roads += `<g class="road" data-road="${d.id}" style="--c:${COLORS[d.id]}"><line class="road-bed" x1="${sx}" y1="${sy}" x2="${fmt(ex)}" y2="${fmt(ey)}"/><line class="road-flow" x1="${sx}" y1="${sy}" x2="${fmt(ex)}" y2="${fmt(ey)}"/></g>`;
+  pieces.push({
+    depth: x + y,
+    svg:
+      `<g class="bld" data-d="${d.id}" tabindex="0" role="button" aria-label="${d.name}: see what is inside" style="--c:${COLORS[d.id]}">` +
+      `<g class="bld-body">${pad}${svg}</g>` +
+      `</g>`,
+  });
+});
+
+// my robot drives a small loop on the road behind me (drawn by src/scripts/world.ts)
+pieces.push({ depth: -4, svg: `<g class="w-robot"></g>` });
+
+// trees in the gaps between buildings
+const tree = (x: number, y: number) => {
+  const [bx, by] = iso(x, y);
+  return `<g class="tree"><ellipse class="shadow" cx="${fmt(bx)}" cy="${fmt(by)}" rx="16" ry="8"/><line class="trunk" x1="${fmt(bx)}" y1="${fmt(by)}" x2="${fmt(bx)}" y2="${fmt(by - 22)}"/><circle class="leaf" cx="${fmt(bx)}" cy="${fmt(by - 34)}" r="16"/><circle class="leaf-hi" cx="${fmt(bx - 5)}" cy="${fmt(by - 39)}" r="7"/></g>`;
+};
+for (const [a, r] of [[105, 9], [165, 9], [225, 8.6], [285, 9], [345, 9], [45, 8.6], [105, 3.6]]) {
+  const { x, y } = place(a, r);
+  pieces.push({ depth: x + y, svg: tree(x, y) });
+}
+
+// me
+pieces.push({ depth: 0.5, svg: `<g class="me-body" data-me>
+  <ellipse class="shadow" cx="0" cy="0" rx="20" ry="10"/>
+  <rect class="leg" x="-8" y="-30" width="6.5" height="30" rx="3"/><rect class="leg" x="1.5" y="-30" width="6.5" height="30" rx="3"/>
+  <rect class="torso" x="-13" y="-64" width="26" height="38" rx="11"/>
+  <rect class="arm" x="-19" y="-60" width="7" height="28" rx="3.5" transform="rotate(8 -15 -60)"/>
+  <rect class="arm" x="12" y="-60" width="7" height="28" rx="3.5" transform="rotate(-8 15 -60)"/>
+  <circle class="head" cx="0" cy="-76" r="12"/>
+  <path class="hair" d="M-12 -78a12 12 0 0 1 24 0q-4 -5 -12 -5t-12 5z"/>
+</g>` });
+pieces.sort((a, b) => a.depth - b.depth);
+
+const S = GROUND;
+const slab =
+  polygon([[S, -S, 0], [S, S, 0], [S, S, -30], [S, -S, -30]], "slab-r") +
+  polygon([[-S, S, 0], [S, S, 0], [S, S, -30], [-S, S, -30]], "slab-l") +
+  polygon([[-S, -S], [S, -S], [S, S], [-S, S]], "slab-t");
+
+// ---------- what is inside each building ----------
+const panelData = districts.map((d) => ({
+  ...d,
+  color: COLORS[d.id],
+  count: counts[d.id],
+  jobs: (d.experience ?? []).map((name) => experience.find((e) => e.company === name)!).filter(Boolean),
+  work: (d.projects ?? []).map((id) => projects.find((p) => p.id === id)!).filter(Boolean),
+  skillList: (d.skills ?? []).map((name) => ({ name, icon: skillIcon(name) })),
+}));
+---
+
+<section class="world container" data-world aria-label="My world">
+  <div class="world-map glass hud reveal">
+    <svg viewBox="-620 -410 1240 760" preserveAspectRatio="xMidYMid slice" role="img" aria-label={`${person.firstName} in the middle, with six buildings around: ${districts.map((d) => d.name).join(", ")}`}>
+      <defs>
+        <clipPath id="me-clip"><circle r="30" /></clipPath>
+        <radialGradient id="me-glow"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.5" /><stop offset="1" stop-color="#22d3ee" stop-opacity="0" /></radialGradient>
+      </defs>
+      <g set:html={slab} />
+      <g class="plaza">
+        <ellipse rx="150" ry="75" class="plaza-ring" />
+        <ellipse rx="105" ry="52.5" class="plaza-in" />
+        <ellipse rx="90" ry="45" class="pulse" /><ellipse rx="90" ry="45" class="pulse two" />
+      </g>
+      <g set:html={roads} />
+      <g set:html={pieces.map((p) => p.svg).join("")} />
+
+      <!-- labels sit above everything so no building hides another one's name -->
+      <g class="tags">
+        {panelData.map((d) => {
+          const w = d.name.length * 8.2 + 74;
+          return (
+            <g class="tag" data-d={d.id} transform={tagAt[d.id]} style={`--c:${d.color}`} aria-hidden="true">
+              <g class="tag-in">
+                <rect x={-w / 2} y="-19" width={w} height="34" rx="17" />
+                <g transform={`translate(${-w / 2 + 9} -11)`}><Icon name={d.icon} size={18} /></g>
+                <text x={-w / 2 + 34} y="3">{d.name}</text>
+                <text class="count" x={w / 2 - 14} y="3">{d.count}</text>
+              </g>
+              <g class="tag-mini">
+                <circle r="20" />
+                <g transform="translate(-11 -11)"><Icon name={d.icon} size={22} /></g>
+              </g>
+            </g>
+          );
+        })}
+      </g>
+
+      <g transform="translate(0 -150)"><g class="me-tag">
+        <circle r="35" class="me-ring" />
+        <image href={url(person.avatar)} x="-30" y="-30" width="60" height="60" clip-path="url(#me-clip)" preserveAspectRatio="xMidYMid slice" />
+        <g transform="translate(0 52)">
+          <rect x="-58" y="-14" width="116" height="26" rx="13" />
+          <text y="4">That's me</text>
+        </g>
+      </g></g>
+    </svg>
+    <p class="world-hint mono">Click a building</p>
+  </div>
+
+  <div class="world-panel glass reveal" aria-live="polite">
+    <div data-panel="intro">
+      <span class="label">My world</span>
+      <h2>Hi, I'm {person.firstName}.</h2>
+      <p class="muted">I'm the one in the middle. Each building around me is one part of what I do. Pick one to look inside.</p>
+      <ul class="d-list">
+        {panelData.map((d) => (
+          <li>
+            <button type="button" data-d={d.id} style={`--c:${d.color}`}>
+              <span class="d-ic"><Icon name={d.icon} size={19} /></span>
+              <span class="d-txt"><strong>{d.name}</strong><small>{d.tagline}</small></span>
+              <Icon name="right" size={16} />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {panelData.map((d) => (
+      <div data-panel={d.id} hidden style={`--c:${d.color}`}>
+        <button type="button" class="back" data-back><Icon name="left" size={16} /> All buildings</button>
+        <div class="p-head">
+          <span class="d-ic big"><Icon name={d.icon} size={24} /></span>
+          <div><h3>{d.name}</h3><p class="muted">{d.tagline}</p></div>
+        </div>
+
+        {d.jobs.length > 0 && (
+          <div class="p-sec">
+            <p class="p-label">Experience</p>
+            <ul class="p-list">
+              {d.jobs.map((e) => (
+                <li>
+                  <strong>{e.role}</strong>
+                  <span>{e.company} · {e.period}</span>
+                  {d.id !== "career" && <small>{e.points[0]}</small>}
+                  {d.id === "career" && <ul class="p-points">{e.points.map((pt) => <li>{pt}</li>)}</ul>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {d.work.length > 0 && (
+          <div class="p-sec">
+            <p class="p-label">Projects</p>
+            <ul class="p-list">
+              {d.work.map((p) => (
+                <li>
+                  <a href={url(`work/${p.id}/`)}><strong>{p.data.title}</strong><Icon name="arrow" size={15} /></a>
+                  <span>{projectMeta(p.data)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {d.studies && (
+          <div class="p-sec">
+            <p class="p-label">Studies</p>
+            <ul class="p-list">
+              {studies.map((s) => (
+                <li>
+                  <strong>{s.qualification}</strong>
+                  <span>{s.school} · {s.period}</span>
+                  {s.notes.length > 0 && <small>{s.notes.join(" · ")}</small>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {d.certifications && (
+          <div class="p-sec">
+            <p class="p-label">Certifications</p>
+            <ul class="p-list">
+              {certifications.map((c) => (
+                <li><strong>{c.name}</strong>{(c.issuer || c.year) && <span>{[c.issuer, c.year].filter(Boolean).join(" · ")}</span>}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {d.competencies && (
+          <div class="p-sec">
+            <p class="p-label">Strengths</p>
+            <div class="p-chips">{competencies.map((c) => <span class="chip">{c}</span>)}</div>
+            <p class="p-label lang">Languages</p>
+            <div class="p-chips">{person.languages.map((l) => <span class="chip">{l}</span>)}</div>
+          </div>
+        )}
+
+        {d.skillList.length > 0 && (
+          <div class="p-sec">
+            <p class="p-label">Tools</p>
+            <div class="p-chips">{d.skillList.map((s) => <span class="chip"><Icon name={s.icon} size={15} />{s.name}</span>)}</div>
+          </div>
+        )}
+
+        <a class="btn p-more" href={d.workTag ? url(`work/?tag=${encodeURIComponent(d.workTag)}`) : url("about/")}>
+          {d.workTag ? `All ${d.workTag} projects` : "Full story on About"} <Icon name="arrow" size={16} />
+        </a>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style is:global>
+  .world {
+    --w-slab-t: #0b1324; --w-slab-l: #070c18; --w-slab-r: #0a1222;
+    --w-wall-l: #182236; --w-wall-r: #212e46; --w-wall-t: #2c3a55;
+    --w-leaf: #10b981; --w-leaf-hi: #34d399; --w-trunk: #64748b; --w-shadow: rgba(0, 0, 0, 0.45);
+    --w-tag: rgba(10, 16, 32, 0.88); --w-road: rgba(148, 163, 184, 0.12);
+    display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(300px, 1fr); gap: 18px; align-items: stretch;
+    padding-top: 10px; padding-bottom: 40px;
+  }
+  :root[data-theme="light"] .world {
+    --w-slab-t: #f3f6fc; --w-slab-l: #cfd8ea; --w-slab-r: #dfe6f3;
+    --w-wall-l: #dbe3f0; --w-wall-r: #edf1f8; --w-wall-t: #ffffff;
+    --w-leaf: #34d399; --w-leaf-hi: #6ee7b7; --w-trunk: #94a3b8; --w-shadow: rgba(30, 41, 80, 0.18);
+    --w-tag: rgba(255, 255, 255, 0.94); --w-road: rgba(71, 85, 105, 0.12);
+  }
+  .world-map { position: relative; padding: 0; overflow: hidden; height: 620px; }
+  .world-map svg { display: block; width: 100%; height: 100%; }
+  .world-hint { position: absolute; left: 18px; bottom: 14px; margin: 0; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+  .world .slab-t { fill: var(--w-slab-t); stroke: var(--glass-border); }
+  .world .slab-l { fill: var(--w-slab-l); }
+  .world .slab-r { fill: var(--w-slab-r); }
+  .world .plaza-ring { fill: rgba(34, 211, 238, 0.05); stroke: rgba(34, 211, 238, 0.35); stroke-dasharray: 6 8; }
+  .world .plaza-in { fill: rgba(34, 211, 238, 0.07); stroke: rgba(34, 211, 238, 0.25); }
+  .world .pulse { fill: url(#me-glow); transform-box: fill-box; transform-origin: center; animation: w-pulse 3s ease-out infinite; }
+  .world .pulse.two { animation-delay: 1.5s; }
+  .world .road-bed { stroke: var(--w-road); stroke-width: 26; stroke-linecap: round; }
+  .world .road-flow { stroke: var(--c); stroke-width: 2.5; stroke-dasharray: 4 14; stroke-linecap: round; opacity: 0.55; animation: w-flow 1.4s linear infinite; }
+  .world .road.on .road-flow { opacity: 1; stroke-width: 3.5; filter: drop-shadow(0 0 6px var(--c)); }
+
+  .world .bld { cursor: pointer; outline: none; }
+  .world .bld-body { transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.35s; }
+  .world .bld:hover .bld-body, .world .bld:focus-visible .bld-body, .world .bld.hl .bld-body { transform: translateY(-8px); filter: drop-shadow(0 10px 18px color-mix(in srgb, var(--c) 45%, transparent)); }
+  .world .bld.active .bld-body { transform: translateY(-12px); filter: drop-shadow(0 0 22px color-mix(in srgb, var(--c) 70%, transparent)); }
+  .world .pad { fill: color-mix(in srgb, var(--c) 7%, transparent); stroke: color-mix(in srgb, var(--c) 45%, transparent); stroke-width: 1.5; }
+  .world .bld.active .pad { fill: color-mix(in srgb, var(--c) 16%, transparent); stroke: var(--c); }
+  .world .bw-l { fill: var(--w-wall-l); stroke: color-mix(in srgb, var(--c) 30%, transparent); stroke-width: 0.8; }
+  .world .bw-r { fill: var(--w-wall-r); stroke: color-mix(in srgb, var(--c) 30%, transparent); stroke-width: 0.8; }
+  .world .bw-t { fill: var(--w-wall-t); stroke: color-mix(in srgb, var(--c) 40%, transparent); stroke-width: 0.8; }
+  .world .acc-l, .world .acc-r, .world .acc-t { fill: var(--c); }
+  .world .acc-l { filter: brightness(0.7); } .world .acc-r { filter: brightness(0.85); }
+  .world .win { fill: color-mix(in srgb, var(--c) 55%, transparent); }
+  .world .win.dim { fill: color-mix(in srgb, var(--c) 30%, transparent); }
+  .world .door { fill: color-mix(in srgb, var(--c) 22%, transparent); stroke: color-mix(in srgb, var(--c) 70%, transparent); }
+  .world .door-line { fill: color-mix(in srgb, var(--c) 60%, transparent); }
+  .world .mast-l, .world .mast-r, .world .mast-t { fill: var(--w-trunk); }
+  .world .beacon { fill: var(--c); filter: drop-shadow(0 0 6px var(--c)); animation: w-blink 1.6s ease-in-out infinite; }
+  .world .sig { fill: none; stroke: var(--c); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: w-sig 2.4s ease-out infinite; }
+  .world .sig.two { animation-delay: 1.2s; }
+  .world .screen { fill: #070b16; stroke: color-mix(in srgb, var(--c) 70%, transparent); }
+  .world .code { fill: var(--c); }
+  .world .code.alt { fill: #22d3ee; }
+  .world .col-l, .world .col-r, .world .col-t { fill: var(--w-wall-t); }
+  .world .roof { fill: var(--w-wall-t); stroke: color-mix(in srgb, var(--c) 40%, transparent); }
+
+  .world .tree .shadow, .world .me-body .shadow, .world .r-shadow { fill: var(--w-shadow); }
+  .world .trunk { stroke: var(--w-trunk); stroke-width: 4; stroke-linecap: round; }
+  .world .leaf { fill: var(--w-leaf); opacity: 0.85; }
+  .world .leaf-hi { fill: var(--w-leaf-hi); opacity: 0.7; }
+
+  .world .leg { fill: #334155; }
+  .world .torso, .world .arm { fill: #22d3ee; }
+  .world .head { fill: #f1c9a5; }
+  .world .hair { fill: #1e293b; }
+  .world .me-body { animation: w-idle 3s ease-in-out infinite; }
+  .world .me-ring { fill: none; stroke: #22d3ee; stroke-width: 3; filter: drop-shadow(0 0 8px #22d3ee); }
+  .world .me-tag rect { fill: var(--w-tag); stroke: rgba(34, 211, 238, 0.6); }
+  .world .me-tag text { fill: var(--text); font: 600 13px var(--font-body); text-anchor: middle; }
+  .world .me-tag { animation: w-bob 3s ease-in-out infinite; }
+
+  .world .tag { cursor: pointer; }
+  .world .tag-mini { display: none; }
+  .world .tag-mini circle { fill: var(--w-tag); stroke: var(--c); stroke-width: 2; }
+  .world .tag-in { --ts: 1.2; transform: scale(var(--ts)); transition: transform 0.3s; }
+  .world .tag rect { fill: var(--w-tag); stroke: color-mix(in srgb, var(--c) 60%, transparent); }
+  .world .tag svg { color: var(--c); }
+  .world .tag text { fill: var(--text); font: 600 13px var(--font-body); }
+  .world .tag text.count { fill: var(--c); font: 600 12px var(--font-mono); text-anchor: end; }
+  .world .tag.active rect, .world .tag.hl rect { stroke: var(--c); stroke-width: 2.5; }
+
+  /* robot (drawn by src/scripts/world.ts) */
+  .world .rb-l { fill: #1f2937; } .world .rb-r { fill: #2b3647; } .world .rb-t { fill: #3b4a60; }
+  .world .rd-l { fill: #cbd5e1; } .world .rd-r { fill: #e2e8f0; } .world .rd-t { fill: #f8fafc; }
+  .world .rw-l, .world .rw-r, .world .rw-t { fill: #0b0f19; }
+  .world .rl-l, .world .rl-r, .world .rl-t { fill: #22d3ee; }
+  .world .rm-l, .world .rm-r, .world .rm-t { fill: #475569; }
+  .world .r-ant { fill: #22d3ee; animation: w-blink 1.4s ease-in-out infinite; }
+
+  @keyframes w-pulse { from { transform: scale(0.4); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+  @keyframes w-flow { to { stroke-dashoffset: -18; } }
+  @keyframes w-blink { 50% { opacity: 0.35; } }
+  @keyframes w-sig { from { transform: scale(0.3); opacity: 1; } to { transform: scale(1.4); opacity: 0; } }
+  @keyframes w-bob { 50% { transform: translateY(-6px); } }
+  @keyframes w-idle { 50% { transform: translateY(-1.5px); } }
+
+  /* ---------- panel ---------- */
+  .world-panel { padding: 24px; overflow-y: auto; height: 620px; }
+  .world-panel h2 { font-size: 1.8rem; margin: 12px 0 10px; }
+  .d-list { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 8px; }
+  .d-list button {
+    display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; text-align: left;
+    border-radius: 14px; border: 1px solid var(--glass-border); background: var(--glass); color: var(--text); font: inherit; cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+  }
+  .d-list button:hover, .d-list button:focus-visible { border-color: var(--c); transform: translateX(3px); background: color-mix(in srgb, var(--c) 8%, transparent); }
+  .d-list button > svg { margin-left: auto; color: var(--muted); flex: none; }
+  .d-ic { display: grid; place-items: center; width: 38px; height: 38px; flex: none; border-radius: 11px; color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); }
+  .d-ic.big { width: 52px; height: 52px; border-radius: 15px; box-shadow: 0 0 24px color-mix(in srgb, var(--c) 30%, transparent); }
+  .d-txt strong { display: block; font-size: 0.95rem; }
+  .d-txt small { display: block; color: var(--muted); font-size: 0.78rem; line-height: 1.35; }
+
+  .back { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px 6px 6px; margin-bottom: 16px; border-radius: 999px; border: 1px solid var(--glass-border); background: none; color: var(--muted); font: 500 0.8rem var(--font-body); cursor: pointer; }
+  .back:hover { color: var(--text); border-color: var(--c); }
+  .p-head { display: flex; gap: 14px; align-items: center; margin-bottom: 8px; }
+  .p-head h3 { font-size: 1.45rem; }
+  .p-head p { margin: 4px 0 0; font-size: 0.9rem; }
+  .p-sec { margin-top: 20px; }
+  .p-label { font: 500 0.7rem var(--font-mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--c); margin: 0 0 8px; }
+  .p-label.lang { margin-top: 14px; }
+  .p-list { list-style: none; margin: 0; padding: 0; }
+  .p-list > li { padding: 10px 0; border-top: 1px solid var(--glass-border); }
+  .p-list strong { font-weight: 600; font-size: 0.93rem; }
+  .p-list span { display: block; color: var(--muted); font-size: 0.8rem; }
+  .p-list small { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 4px; line-height: 1.45; }
+  .p-list a { display: flex; justify-content: space-between; gap: 10px; align-items: center; text-decoration: none; }
+  .p-list a svg { flex: none; color: var(--c); transition: transform 0.2s; }
+  .p-list a:hover strong { color: var(--c); }
+  .p-list a:hover svg { transform: translateX(3px); }
+  .p-points { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: 0.82rem; }
+  .p-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .p-chips .chip { font-size: 0.8rem; padding: 6px 11px; }
+  .p-chips .chip svg { color: var(--c); }
+  .p-more { margin-top: 22px; }
+
+  @media (max-width: 960px) {
+    .world { grid-template-columns: 1fr; }
+    .world-map { height: auto; aspect-ratio: 1 / 0.85; }
+    .world-panel { height: auto; }
+    .world .tag-in { --ts: 1.6; }
+    .world .tag text.count { display: none; }
+  }
+  /* phones: names would cover the map, so each building gets a round icon badge instead */
+  @media (max-width: 560px) {
+    .world-map { aspect-ratio: 1 / 1; }
+    .world .tag-in { display: none; }
+    .world .tag-mini { display: block; transform: scale(2.1); }
+    .world .tag.active .tag-mini circle { fill: var(--c); }
+    .world .tag.active .tag-mini svg { color: #031018; }
+    .world .me-tag text { font-size: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .world .bld-body { transition: none; }
+  }
+</style>
