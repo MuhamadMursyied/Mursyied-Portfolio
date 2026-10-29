@@ -2,7 +2,7 @@
 
 My personal portfolio as a robotics software engineer working on autonomous ground robots with ROS 2. A futuristic glass design with Home, About and Work pages, a page per project, smooth page transitions, a live Kuala Lumpur clock, and dark and light modes.
 
-**Live:** https://muhamadmursyied.github.io/Mursyied-Portfolio/
+**Live:** https://mursyied-portfolio.vercel.app
 
 ![Home page](docs/home.png)
 
@@ -66,6 +66,8 @@ CV Builder and Kedai POS are kept as drafts (`draft: true`) and are not publishe
 `.github/workflows/deploy.yml` builds and publishes the site to GitHub Pages on every push to `main`.
 
 One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+It also deploys on [Vercel](https://vercel.com) with no settings: import the repo and keep the Astro preset. Vercel serves the site from the root, and `astro.config.mjs` detects the Vercel build (`VERCEL=1`) and drops the `/Mursyied-Portfolio` base path.
 
 ### Custom domain
 
