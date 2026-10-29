@@ -1,21 +1,17 @@
 ---
-import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
-import ProjectCard from "../components/ProjectCard.astro";
 import World from "../components/World.astro";
-import { certifications, person, skills } from "../data/profile";
-import { sortProjects, url } from "../utils";
+import { person, skills, socials } from "../data/profile";
+import { url } from "../utils";
 
-const projects = sortProjects(await getCollection("projects", (p) => !p.data.draft));
-const allSkills = skills.flatMap((g) => g.items);
-const typedWords = allSkills.slice(0, 10).map((s) => s.name);
+const typedWords = skills.flatMap((g) => g.items).slice(0, 10).map((s) => s.name);
 const headlineWords = person.headline.split(" ");
 ---
 
-<Base>
-  <!-- hero -->
-  <section class="hero container">
+<!-- One screen, no scrolling: who I am on the left, my world on the right. Details live in the other tabs. -->
+<Base footer={false}>
+  <section class="home">
     <div class="hero-text">
       <p class="status glass reveal"><span class="dot"></span>{person.status}</p>
       <h1 class="words" aria-label={person.headline}>
@@ -28,99 +24,58 @@ const headlineWords = person.headline.split(" ");
       <div class="actions reveal" style="--delay:550ms">
         <a class="btn primary" href={url("work/")}>View my work <Icon name="arrow" size={17} /></a>
         <a class="btn" href={url("about/")}>About me</a>
+        {socials.map((s) => (
+          <a class="btn icon" href={s.url} aria-label={s.label} title={s.label} target={s.url.startsWith("http") ? "_blank" : undefined} rel="noopener"><Icon name={s.icon} size={18} /></a>
+        ))}
       </div>
     </div>
-
-    <aside class="id-card glass hud spot reveal" style="--delay:250ms" aria-label="Profile">
-      <div class="scan" aria-hidden="true"></div>
-      <div class="avatar-ring">
-        <img src={url(person.avatar)} alt={person.name} width="132" height="132" />
-      </div>
-      <p class="id-name">{person.name}</p>
-      <p class="id-role mono">{person.role.toUpperCase()}</p>
-      <p class="id-loc"><Icon name="pin" size={15} /> {person.location}</p>
-      <ul class="stats">
-        <li><strong data-count={projects.length}>{projects.length}</strong><span>Projects</span></li>
-        <li><strong data-count={allSkills.length}>{allSkills.length}</strong><span>Skills</span></li>
-        <li><strong data-count={certifications.length}>{certifications.length}</strong><span>Certs</span></li>
-      </ul>
-    </aside>
-  </section>
-
-  <!-- me in the middle, one building per part of what I do -->
-  <World />
-
-  <!-- featured work -->
-  <section class="section container">
-    <div class="section-head reveal split">
-      <div>
-        <span class="label">Selected work</span>
-        <h2>Things I have built</h2>
-      </div>
-      <a class="btn" href={url("work/")}>All {projects.length} projects <Icon name="arrow" size={17} /></a>
-    </div>
-    <ul class="project-grid">
-      {projects.slice(0, 3).map((p, i) => <ProjectCard project={p} index={i} />)}
-    </ul>
-  </section>
-
-  <!-- contact -->
-  <section class="section container">
-    <div class="cta glass hud reveal">
-      <span class="label">Contact</span>
-      <h2 class="gradient-text">Let's build something that moves.</h2>
-      <p class="muted">Interested in robotics, autonomous vehicles or a collaboration? I'm happy to talk.</p>
-      <a class="btn primary" href={`mailto:${person.email}`}><Icon name="mail" size={17} /> {person.email}</a>
+    <div class="home-world">
+      <World />
     </div>
   </section>
 </Base>
 
 <style>
-  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; min-height: 100vh; padding-top: 110px; padding-bottom: 60px; }
-  .status { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px; font-size: 0.85rem; color: var(--muted); margin-bottom: 26px; }
+  .home {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr); gap: 40px; align-items: center;
+    height: 100vh; height: 100svh; max-width: 1560px; margin: 0 auto; padding: 84px 28px 28px; overflow: hidden;
+  }
+  .status { display: inline-flex; align-items: center; gap: 10px; padding: 7px 15px; border-radius: 999px; font-size: 0.82rem; color: var(--muted); margin-bottom: 22px; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 12px #34d399; }
-  h1 { font-size: clamp(2.8rem, 7vw, 5.2rem); line-height: 1; letter-spacing: -0.04em; margin-bottom: 26px; }
-  .sub { font-size: clamp(1.05rem, 1.8vw, 1.25rem); color: var(--muted); max-width: 54ch; }
-  .typed-line { font-size: 0.95rem; color: var(--muted); margin: 6px 0 30px; }
+  h1 { font-size: clamp(2.3rem, 4.4vw, 4rem); line-height: 1.02; letter-spacing: -0.04em; margin-bottom: 20px; }
+  .sub { font-size: clamp(0.98rem, 1.3vw, 1.12rem); color: var(--muted); max-width: 52ch; }
+  .typed-line { font-size: 0.9rem; color: var(--muted); margin: 4px 0 26px; }
   .prompt { color: var(--violet); }
   .typed { color: var(--text); font-weight: 500; }
   .caret { display: inline-block; width: 0.55em; height: 1.1em; vertical-align: -0.2em; margin-left: 3px; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: blink 1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
-  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn.icon { width: 46px; padding: 0; justify-content: center; }
+  /* the map keeps its shape and shrinks to fit the screen height */
+  .home-world { height: 100%; min-height: 0; display: flex; align-items: center; }
+  .home-world :global(.world) { width: 100%; height: auto; max-height: 100%; }
+  .home-world :global(.world-map) { aspect-ratio: 1240 / 760; max-height: calc(100svh - 112px); margin: 0 auto; }
 
-  .id-card { padding: 34px 28px 26px; text-align: center; overflow: hidden; }
-  .scan {
-    position: absolute; left: 0; right: 0; top: -40%; height: 40%; pointer-events: none;
-    background: linear-gradient(180deg, transparent, rgba(34, 211, 238, 0.12), transparent);
-    animation: scan 5s linear infinite;
-  }
-  @keyframes scan { to { top: 100%; } }
-  .avatar-ring { position: relative; width: 148px; height: 148px; margin: 0 auto 18px; padding: 8px; border-radius: 50%; isolation: isolate; }
-  .avatar-ring::before {
-    content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 50%;
-    background: conic-gradient(from var(--angle, 0deg), var(--cyan), transparent 30%, var(--violet) 55%, transparent 80%, var(--cyan));
-    animation: spin 6s linear infinite;
-    -webkit-mask: radial-gradient(circle, transparent 66px, #000 67px); mask: radial-gradient(circle, transparent 66px, #000 67px);
-  }
-  @property --angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-  @keyframes spin { to { --angle: 360deg; } }
-  .avatar-ring img { width: 132px; height: 132px; border-radius: 50%; object-fit: cover; }
-  .id-name { font: 600 1.35rem var(--font-head); margin: 0; }
-  .id-role { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.16em; margin: 6px 0 10px; }
-  .id-loc { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.9rem; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; list-style: none; padding: 18px 0 0; margin: 12px 0 0; border-top: 1px solid var(--glass-border); }
-  .stats li { display: flex; flex-direction: column; }
-  .stats strong { font: 700 1.9rem/1.1 var(--font-head); color: var(--text); font-variant-numeric: tabular-nums; text-shadow: 0 0 20px rgba(34, 211, 238, 0.35); }
-  .stats span { font: 500 0.7rem var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-
-  .split { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; padding: 0; margin: 0; }
-
-  .cta { padding: clamp(32px, 6vw, 64px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; overflow: hidden; }
-  .cta h2 { font-size: clamp(2rem, 5vw, 3.4rem); }
-  .cta p { margin: 0 0 10px; }
-
+  /* tablets and phones: text on top, the map takes the rest of the screen */
   @media (max-width: 900px) {
-    .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 96px; gap: 36px; }
+    .home { display: flex; flex-direction: column; align-items: stretch; gap: 14px; padding: 72px 16px 16px; }
+    .status { margin-bottom: 14px; font-size: 0.76rem; padding: 6px 12px; }
+    h1 { font-size: clamp(1.9rem, 7.4vw, 2.6rem); margin-bottom: 10px; }
+    .sub { font-size: 0.92rem; margin-bottom: 0.6em; }
+    .typed-line { display: none; }
+    .actions .btn { min-height: 42px; }
+    .home-world { flex: 1; }
+    .home-world :global(.world) { height: 100%; }
+    .home-world :global(.world-map) { aspect-ratio: auto; height: 100%; max-height: none; }
+  }
+  @media (max-width: 480px) {
+    .btn.icon { display: none; }
+  }
+  @media (max-width: 640px) {
+    .home { padding-bottom: 92px; }
+  }
+  @media (max-height: 700px) and (min-width: 901px) {
+    .typed-line { display: none; }
+    .sub { display: none; }
   }
 </style>

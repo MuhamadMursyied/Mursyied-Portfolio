@@ -30,7 +30,7 @@ npm run dev        # http://localhost:4321/Mursyied-Portfolio
 | Images | `public/images/` |
 | Colours and the glass look | `src/styles/global.css` (variables at the top) |
 | Animations and interactions | `src/scripts/ui.ts` |
-| "My world" map on Home (buildings and what's inside) | `src/data/world.ts`, `src/components/World.astro`, `src/scripts/world.ts` |
+| "My world" map on Home (buildings and the tab each one opens) | `src/data/world.ts`, `src/components/World.astro`, `src/scripts/world.ts` |
 | Icons | `src/components/Icon.astro` (brand icons from simple-icons, outline icons from Tabler) |
 
 ### Add a project
