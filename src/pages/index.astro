@@ -6,22 +6,28 @@ import { person, skills, socials } from "../data/profile";
 import { url } from "../utils";
 
 const typedWords = skills.flatMap((g) => g.items).slice(0, 10).map((s) => s.name);
-const headlineWords = person.headline.split(" ");
+const [town, state] = person.location.split(", ");
 ---
 
-<!-- One screen, no scrolling: who I am on the left, my world on the right. Details live in the other tabs. -->
-<Base footer={false}>
-  <section class="home">
-    <div class="hero-text">
-      <p class="status glass reveal"><span class="dot"></span>{person.status}</p>
-      <h1 class="words" aria-label={person.headline}>
-        {headlineWords.map((w, i) => (<><span class="w gradient-text" style={`--i:${i}`} aria-hidden="true">{w}</span>{" "}</>))}
+<!-- One screen, no scrolling: my little world fills the page, with a HUD on top (inspired by a 3D campus explorer). -->
+<Base footer={false} hud>
+  <section class="home" data-home>
+    <div class="stage"><World bare /></div>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <div class="hud-title">
+      <p class="kicker mono">{town.toUpperCase()}, {state.toUpperCase()} <span>/ 01</span></p>
+      <h1>
+        <span class="name">{person.firstName}</span>
+        <span class="slash">/</span>
+        <span class="what">Robotics world</span>
       </h1>
-      <p class="sub reveal" style="--delay:350ms">{person.subline}</p>
-      <p class="typed-line mono reveal" style="--delay:450ms">
+      <p class="tagline">{person.headline}</p>
+      <p class="sub">{person.subline}</p>
+      <p class="typed-line mono">
         <span class="prompt">~/robotics $</span> working with <span class="typed" data-words={JSON.stringify(typedWords)}>{typedWords[0]}</span><span class="caret"></span>
       </p>
-      <div class="actions reveal" style="--delay:550ms">
+      <div class="actions">
         <a class="btn primary" href={url("work/")}>View my work <Icon name="arrow" size={17} /></a>
         <a class="btn" href={url("about/")}>About me</a>
         {socials.map((s) => (
@@ -29,53 +35,153 @@ const headlineWords = person.headline.split(" ");
         ))}
       </div>
     </div>
-    <div class="home-world">
-      <World />
+
+    <aside class="hud-time glass" aria-label="Local time and weather in Rawang">
+      <div class="time-row">
+        <div>
+          <p class="hud-label mono">Malaysia · MYT · UTC+8</p>
+          <p class="big-clock mono" data-hud-clock>--:--:--</p>
+        </div>
+        <p class="tod mono"><span class="live"></span><span data-hud-tod>Live</span></p>
+      </div>
+      <div class="weather">
+        <p class="temp"><span data-w="temp">--°C</span><small data-w="cond">Connecting to weather</small></p>
+        <dl>
+          <div><dt>Wind</dt><dd data-w="wind">—</dd></div>
+          <div><dt>Humidity</dt><dd data-w="hum">—</dd></div>
+          <div><dt>Rain</dt><dd data-w="rain">—</dd></div>
+        </dl>
+        <p class="hud-foot mono"><span data-w="status">Fetching current conditions</span> · <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>
+      </div>
+    </aside>
+
+    <div class="hud-controls" role="group" aria-label="Map view">
+      <div class="compass" aria-hidden="true"><span>N</span><svg viewBox="0 0 40 40"><path d="M20 4 L25 20 L20 17 L15 20 Z" /><path class="s" d="M20 36 L15 20 L20 23 L25 20 Z" /></svg></div>
+      <div class="ctrl glass">
+        <button type="button" data-view="in" aria-label="Zoom in"><Icon name="plus" size={17} /></button>
+        <button type="button" data-view="out" aria-label="Zoom out"><Icon name="minus" size={17} /></button>
+        <button type="button" data-view="home" aria-label="Reset view"><Icon name="fit" size={17} /></button>
+        <button type="button" data-view="orbit" aria-pressed="true" aria-label="Cinematic orbit"><Icon name="target" size={17} /></button>
+      </div>
+    </div>
+
+    <footer class="hud-band mono">
+      <span><b>{person.firstName.toUpperCase()} DIGITAL WORLD</b> · PORTFOLIO / ISO</span>
+      <span class="hint">Drag to move · Scroll to zoom · Click a building to explore</span>
+      <span>3.32° N 101.58° E</span>
+    </footer>
+
+    <div class="boot" data-boot aria-hidden="true">
+      <p class="boot-title">Assembling my little world</p>
+      <p class="boot-line mono" data-boot-line>Starting up</p>
+      <span class="boot-bar"><span></span></span>
     </div>
   </section>
 </Base>
 
 <style>
   .home {
-    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr); gap: 40px; align-items: center;
-    height: 100vh; height: 100svh; max-width: 1560px; margin: 0 auto; padding: 84px 28px 28px; overflow: hidden;
+    position: relative; height: 100vh; height: 100svh; overflow: hidden;
+    background: radial-gradient(ellipse 70% 60% at 62% 55%, rgba(34, 211, 238, 0.09), transparent 70%), linear-gradient(180deg, rgba(12, 25, 30, 0.75), rgba(12, 25, 30, 0.2));
   }
-  .status { display: inline-flex; align-items: center; gap: 10px; padding: 7px 15px; border-radius: 999px; font-size: 0.82rem; color: var(--muted); margin-bottom: 22px; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 12px #34d399; }
-  h1 { font-size: clamp(2.3rem, 4.4vw, 4rem); line-height: 1.02; letter-spacing: -0.04em; margin-bottom: 20px; }
-  .sub { font-size: clamp(0.98rem, 1.3vw, 1.12rem); color: var(--muted); max-width: 52ch; }
-  .typed-line { font-size: 0.9rem; color: var(--muted); margin: 4px 0 26px; }
+  :global([data-theme="light"]) .home { background: radial-gradient(ellipse 70% 60% at 62% 55%, rgba(8, 145, 178, 0.1), transparent 70%); }
+  .stage { position: absolute; inset: 0; }
+  .stage :global(.world), .stage :global(.world-map) { height: 100%; }
+  .stage :global(svg) { cursor: grab; touch-action: none; }
+  .stage :global(svg.dragging) { cursor: grabbing; }
+  .scrim { position: absolute; inset: 0 auto 0 0; width: 46%; pointer-events: none; background: linear-gradient(90deg, var(--bg) 10%, transparent); opacity: 0.75; }
+
+  /* ---------- title block (top left) ---------- */
+  .hud-title { position: absolute; left: clamp(20px, 4vw, 64px); top: 50%; transform: translateY(-50%); width: min(560px, 42vw); z-index: 2; }
+  .kicker { margin: 0 0 14px; font-size: 0.75rem; letter-spacing: 0.24em; color: var(--accent); }
+  .kicker span { color: var(--faint); }
+  h1 { font-size: clamp(2.6rem, 5.2vw, 4.8rem); line-height: 0.95; letter-spacing: -0.03em; text-transform: uppercase; margin: 0 0 18px; }
+  h1 span { display: block; }
+  .name { background: linear-gradient(100deg, var(--text) 30%, var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .slash { display: inline !important; color: var(--accent); font-weight: 500; margin-right: 0.15em; }
+  .what { display: inline !important; font-weight: 500; color: var(--muted); font-size: 0.62em; letter-spacing: 0.02em; }
+  .tagline { font: 600 clamp(1.1rem, 1.6vw, 1.35rem)/1.3 var(--font-head); margin: 0 0 10px; }
+  .sub { color: var(--muted); font-size: 0.98rem; max-width: 48ch; }
+  .typed-line { font-size: 0.86rem; color: var(--muted); margin: 0 0 24px; }
   .prompt { color: var(--violet); }
   .typed { color: var(--text); font-weight: 500; }
   .caret { display: inline-block; width: 0.55em; height: 1.1em; vertical-align: -0.2em; margin-left: 3px; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: blink 1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
   .actions { display: flex; flex-wrap: wrap; gap: 10px; }
   .btn.icon { width: 46px; padding: 0; justify-content: center; }
-  /* the map keeps its shape and shrinks to fit the screen height */
-  .home-world { height: 100%; min-height: 0; display: flex; align-items: center; }
-  .home-world :global(.world) { width: 100%; height: auto; max-height: 100%; }
-  .home-world :global(.world-map) { aspect-ratio: 1240 / 760; max-height: calc(100svh - 112px); margin: 0 auto; }
 
-  /* tablets and phones: text on top, the map takes the rest of the screen */
+  /* ---------- time and weather (top right) ---------- */
+  .hud-time { position: absolute; right: clamp(16px, 2.5vw, 40px); top: 84px; z-index: 2; width: 270px; padding: 16px 18px; border-radius: 18px; }
+  .time-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .hud-label { margin: 0; font-size: 0.64rem; letter-spacing: 0.16em; color: var(--muted); text-transform: uppercase; }
+  .big-clock { margin: 4px 0 0; font-size: 1.9rem; font-weight: 500; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+  .tod { display: inline-flex; align-items: center; gap: 6px; margin: 2px 0 0; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+  .live { width: 7px; height: 7px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d399; animation: blink 1.6s ease-in-out infinite; }
+  .weather { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--glass-border); }
+  .temp { display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px; font: 600 1.6rem var(--font-head); }
+  .temp small { font: 500 0.82rem var(--font-body); color: var(--muted); }
+  dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; }
+  dt { font: 500 0.6rem var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+  dd { margin: 2px 0 0; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+  .hud-foot { margin: 10px 0 0; font-size: 0.62rem; color: var(--faint); letter-spacing: 0.06em; }
+  .hud-foot a { color: var(--muted); }
+
+  /* ---------- map controls (bottom right) ---------- */
+  .hud-controls { position: absolute; right: clamp(16px, 2.5vw, 40px); bottom: 64px; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .compass { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .compass span { position: absolute; top: -18px; font: 600 0.7rem var(--font-mono); color: var(--accent); }
+  .compass svg { width: 34px; height: 34px; transform: rotate(45deg); }
+  .compass path { fill: var(--cyan); }
+  .compass path.s { fill: var(--faint); }
+  .ctrl { display: flex; flex-direction: column; padding: 5px; gap: 2px; border-radius: 14px; }
+  .ctrl button { display: grid; place-items: center; width: 38px; height: 38px; border: 0; border-radius: 10px; background: none; color: var(--muted); cursor: pointer; }
+  .ctrl button:hover, .ctrl button[aria-pressed="true"] { color: var(--accent); background: var(--glass-strong); }
+  .home.orbiting [data-view="orbit"] :global(svg) { animation: spin 6s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- bottom band ---------- */
+  .hud-band {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; justify-content: space-between; gap: 16px;
+    padding: 12px clamp(20px, 4vw, 64px); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint);
+    border-top: 1px solid var(--glass-border); background: linear-gradient(0deg, var(--bg), transparent);
+  }
+  .hud-band b { color: var(--muted); font-weight: 500; }
+  .hint { color: var(--muted); }
+
+  /* ---------- intro overlay ---------- */
+  .boot { position: absolute; inset: 0; z-index: 5; display: grid; place-content: center; justify-items: center; gap: 10px; background: var(--bg); transition: opacity 0.6s, visibility 0.6s; }
+  .boot.done { opacity: 0; visibility: hidden; }
+  .boot-title { margin: 0; font: 600 clamp(1.3rem, 3vw, 2rem) var(--font-head); text-transform: uppercase; letter-spacing: 0.08em; }
+  .boot-line { margin: 0; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .boot-bar { display: block; width: 220px; height: 2px; margin-top: 8px; background: var(--glass-border); overflow: hidden; border-radius: 2px; }
+  .boot-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--cyan), var(--violet)); animation: fill 1.5s ease-out forwards; }
+  @keyframes fill { to { width: 100%; } }
+
+  /* laptops with short screens */
+  @media (max-height: 760px) and (min-width: 901px) {
+    .sub, .typed-line { display: none; }
+    .tagline { margin-bottom: 20px; }
+    .hud-time { top: 76px; }
+  }
+
+  /* tablets and phones: title on top, the world fills the rest, compact HUD */
   @media (max-width: 900px) {
-    .home { display: flex; flex-direction: column; align-items: stretch; gap: 14px; padding: 72px 16px 16px; }
-    .status { margin-bottom: 14px; font-size: 0.76rem; padding: 6px 12px; }
-    h1 { font-size: clamp(1.9rem, 7.4vw, 2.6rem); margin-bottom: 10px; }
-    .sub { font-size: 0.92rem; margin-bottom: 0.6em; }
-    .typed-line { display: none; }
+    .home { display: flex; flex-direction: column; }
+    .scrim, .hud-band, .sub, .typed-line, .weather, .compass { display: none; }
+    .hud-title { order: -1; position: relative; left: auto; top: auto; transform: none; width: auto; padding: 68px 16px 0; }
+    .kicker { margin-bottom: 8px; font-size: 0.68rem; }
+    h1 { font-size: clamp(2rem, 9vw, 2.8rem); margin-bottom: 10px; }
+    .tagline { font-size: 1rem; margin-bottom: 14px; }
     .actions .btn { min-height: 42px; }
-    .home-world { flex: 1; }
-    .home-world :global(.world) { height: 100%; }
-    .home-world :global(.world-map) { aspect-ratio: auto; height: 100%; max-height: none; }
+    .stage { position: relative; inset: auto; flex: 1; min-height: 0; }
+    .hud-time { top: auto; bottom: 96px; left: 12px; right: auto; width: auto; padding: 8px 12px; border-radius: 12px; }
+    .hud-label { display: none; }
+    .big-clock { font-size: 1rem; margin: 0; }
+    .time-row { flex-direction: column; gap: 2px; align-items: flex-start; }
+    .hud-controls { bottom: 96px; right: 12px; }
+    .ctrl { flex-direction: row; }
   }
   @media (max-width: 480px) {
     .btn.icon { display: none; }
-  }
-  @media (max-width: 640px) {
-    .home { padding-bottom: 92px; }
-  }
-  @media (max-height: 700px) and (min-width: 901px) {
-    .typed-line { display: none; }
-    .sub { display: none; }
   }
 </style>
