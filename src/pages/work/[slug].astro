@@ -1,0 +1,118 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { person } from "../../data/profile";
+import { projectMeta, sortProjects, url } from "../../utils";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects", (p) => !p.data.draft);
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { title, summary, tags, links, images } = project.data;
+
+const others = sortProjects(await getCollection("projects", (p) => !p.data.draft && p.id !== project.id));
+// Related: projects that share a tag, then the newest others.
+const related = [
+  ...others.filter((p) => p.data.tags.some((t) => tags.includes(t))),
+  ...others.filter((p) => !p.data.tags.some((t) => tags.includes(t))),
+].slice(0, 3);
+---
+
+<Base title={`${title} · ${person.name}`} description={summary} image={images[0]}>
+  <article class="container page">
+    <header class="head">
+      <a class="back mono reveal" href={url("work/")}><Icon name="left" size={15} /> All projects</a>
+      <p class="date mono reveal">{projectMeta(project.data)}</p>
+      <h1 class="gradient-text reveal">{title}</h1>
+      <p class="summary reveal">{summary}</p>
+      <ul class="tags reveal">{tags.map((t) => <li><a href={url(`work/?tag=${encodeURIComponent(t)}`)}>{t}</a></li>)}</ul>
+      {links.length > 0 && (
+        <div class="links reveal">
+          {links.map((l, i) => (
+            <a class:list={["btn", { primary: i === 0 }]} href={l.url} target="_blank" rel="noopener">{l.label} <Icon name="external" size={16} /></a>
+          ))}
+        </div>
+      )}
+    </header>
+
+    {images.length > 0 && (
+      <div class="gallery glass hud reveal" data-gallery>
+        <div class="gallery-main">
+          <img src={url(images[0])} alt={title} transition:name={`cover-${project.id}`} />
+          {images.length > 1 && (
+            <>
+              <button type="button" class="gallery-prev" aria-label="Previous image"><Icon name="left" size={20} /></button>
+              <button type="button" class="gallery-next" aria-label="Next image"><Icon name="right" size={20} /></button>
+            </>
+          )}
+        </div>
+        {images.length > 1 && (
+          <div class="gallery-thumbs">
+            {images.map((src, i) => (
+              <button type="button" data-src={url(src)} aria-current={i === 0 ? "true" : "false"} aria-label={`Show image ${i + 1}`}>
+                <img src={url(src)} alt="" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    )}
+
+    <div class="prose reveal">
+      <Content />
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section class="container related">
+      <div class="section-head reveal">
+        <span class="label">Keep exploring</span>
+        <h2>Related projects</h2>
+      </div>
+      <ul class="grid">{related.map((p, i) => <ProjectCard project={p} index={i} />)}</ul>
+    </section>
+  )}
+</Base>
+
+<style>
+  .page { padding-top: 120px; }
+  .head { max-width: 760px; margin: 0 auto 40px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+  .back { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 0.82rem; margin-bottom: 26px; }
+  .back:hover { color: var(--accent); }
+  .date { color: var(--accent); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 12px; }
+  h1 { font-size: clamp(2.2rem, 5.5vw, 3.8rem); margin-bottom: 18px; }
+  .summary { color: var(--muted); font-size: 1.12rem; max-width: 60ch; }
+  .tags { justify-content: center; margin-bottom: 24px; }
+  .tags a { color: inherit; text-decoration: none; }
+  .tags li:hover { border-color: var(--accent); }
+  .links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+  .gallery { padding: 12px; margin-bottom: 48px; }
+  .gallery-main { position: relative; aspect-ratio: 16 / 9; border-radius: calc(var(--radius) - 8px); overflow: hidden; background: rgba(0, 0, 0, 0.3); }
+  .gallery-main img { width: 100%; height: 100%; object-fit: contain; transition: opacity 0.15s; }
+  .gallery-prev, .gallery-next {
+    position: absolute; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 44px; height: 44px;
+    border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(4, 6, 13, 0.55); color: #fff; cursor: pointer; backdrop-filter: blur(8px);
+  }
+  .gallery-prev { left: 12px; }
+  .gallery-next { right: 12px; }
+  .gallery-thumbs { display: flex; gap: 10px; padding: 12px 4px 4px; overflow-x: auto; }
+  .gallery-thumbs button { flex: none; width: 110px; aspect-ratio: 16 / 10; padding: 0; border-radius: 10px; overflow: hidden; cursor: pointer; border: 2px solid transparent; background: none; opacity: 0.55; transition: opacity 0.2s, border-color 0.2s; }
+  .gallery-thumbs button[aria-current="true"] { opacity: 1; border-color: var(--accent); box-shadow: 0 0 16px rgba(34, 211, 238, 0.35); }
+  .gallery-thumbs img { width: 100%; height: 100%; object-fit: cover; }
+
+  .prose { max-width: 680px; margin: 0 auto; font-size: 1.05rem; color: var(--muted); }
+  .prose :global(h2) { color: var(--text); font-size: 1.5rem; margin: 36px 0 14px; }
+  .prose :global(ul) { padding-left: 1.2em; }
+  .prose :global(li) { margin-bottom: 8px; }
+  .prose :global(li::marker) { color: var(--accent); }
+  .prose :global(a) { color: var(--accent); }
+
+  .related { padding-top: 80px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; padding: 0; margin: 0; }
+</style>

@@ -1,0 +1,164 @@
+---
+import { ClientRouter } from "astro:transitions";
+import Icon from "../components/Icon.astro";
+import { person, socials } from "../data/profile";
+import { url } from "../utils";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+const {
+  title = `${person.name} · Robotics Engineer`,
+  description = "Mechatronics engineer building software for unmanned ground vehicles with ROS 2.",
+  image = "images/og/home.jpg",
+} = Astro.props;
+
+const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ""), "") || "/";
+const nav = [
+  { href: "", label: "Home", icon: "home", active: path === "/" },
+  { href: "about/", label: "About", icon: "user", active: path.startsWith("/about") },
+  { href: "work/", label: "Work", icon: "grid", active: path.startsWith("/work") },
+];
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(url(image), Astro.site);
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href={url("favicon.svg")} type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
+    />
+    <!-- Apply the saved theme before the first paint so the page never flashes. -->
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        root.classList.add("js");
+        var saved = null;
+        try { saved = localStorage.getItem("theme"); } catch (e) {}
+        root.dataset.theme = saved === "light" ? "light" : "dark";
+      })();
+    </script>
+    <ClientRouter />
+  </head>
+  <body>
+    <div class="backdrop" aria-hidden="true" transition:persist>
+      <div class="blob one"></div>
+      <div class="blob two"></div>
+      <div class="blob three"></div>
+      <div class="bg-grid"></div>
+      <div class="cursor-light"></div>
+      <div class="noise"></div>
+    </div>
+
+    <header class="topbar">
+      <div class="topbar-side mono">
+        <span class="live-dot"></span>
+        <span class="hide-s">{person.timeZone.replace("_", " ")}</span>
+      </div>
+      <nav class="nav glass" aria-label="Main">
+        {
+          nav.map((item) => (
+            <a href={url(item.href)} class:list={["nav-link", { active: item.active }]} aria-current={item.active ? "page" : undefined}>
+              <Icon name={item.icon} size={17} />
+              <span class="nav-label">{item.label}</span>
+            </a>
+          ))
+        }
+        <span class="nav-sep" aria-hidden="true"></span>
+        <button type="button" class="nav-link theme-toggle" aria-label="Switch light or dark mode">
+          <span class="icon-dark"><Icon name="moon" size={17} /></span>
+          <span class="icon-light"><Icon name="sun" size={17} /></span>
+        </button>
+      </nav>
+      <div class="topbar-side right mono">
+        <time class="clock" data-tz={person.timeZone}>--:--:--</time>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="footer container">
+      <p class="mono">© {year} {person.name} · Built with Astro</p>
+      <div class="footer-links">
+        {
+          socials.map((s) => (
+            <a href={s.url} aria-label={s.label} title={s.label} target={s.url.startsWith("http") ? "_blank" : undefined} rel="noopener">
+              <Icon name={s.icon} size={18} />
+            </a>
+          ))
+        }
+      </div>
+    </footer>
+
+    <script>
+      import "../scripts/ui.ts";
+    </script>
+  </body>
+</html>
+
+<style>
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px;
+    padding: 16px 20px; pointer-events: none;
+  }
+  .topbar > * { pointer-events: auto; }
+  /* fade behind the bar so scrolled content doesn't clash with the clock */
+  .topbar::before {
+    content: ""; position: absolute; inset: 0 0 -24px; z-index: -1; pointer-events: none;
+    background: linear-gradient(var(--bg) 35%, transparent);
+  }
+  .topbar-side { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; }
+  .topbar-side.right { justify-content: flex-end; }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 12px #34d399; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: 0.4; } }
+  .nav { display: flex; align-items: center; gap: 2px; padding: 5px; border-radius: 999px; }
+  .nav-link {
+    position: relative; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px;
+    border-radius: 999px; border: 0; background: none; color: var(--muted); text-decoration: none;
+    font: 500 0.9rem var(--font-body); cursor: pointer; transition: color 0.2s, background 0.2s;
+  }
+  .nav-link:hover { color: var(--text); background: var(--glass-strong); }
+  .nav-link.active { color: var(--text); background: var(--glass-strong); box-shadow: inset 0 0 0 1px var(--glass-border), 0 0 18px rgba(34, 211, 238, 0.18); }
+  .nav-link.active svg { color: var(--accent); }
+  .nav-sep { width: 1px; height: 20px; background: var(--glass-border); margin: 0 4px; }
+  .theme-toggle { padding: 0 11px; }
+  :global([data-theme="dark"]) .icon-light, :global([data-theme="light"]) .icon-dark { display: none; }
+  .icon-dark, .icon-light { display: inline-flex; }
+
+  .footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 40px; padding-bottom: 40px; color: var(--faint); font-size: 0.8rem; }
+  .footer p { margin: 0; }
+  .footer-links { display: flex; gap: 6px; }
+  .footer-links a { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: var(--muted); }
+  .footer-links a:hover { color: var(--accent); background: var(--glass); }
+
+  /* phones: status and clock on top, the menu floats at the bottom like an app bar */
+  @media (max-width: 640px) {
+    .topbar { grid-template-columns: 1fr 1fr; padding: 14px 16px; }
+    .nav { position: fixed; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translateX(-50%); }
+    .nav-label { display: none; }
+    .nav-link { padding: 0 16px; height: 44px; }
+    .footer { flex-direction: column; padding-bottom: 110px; text-align: center; }
+  }
+</style>

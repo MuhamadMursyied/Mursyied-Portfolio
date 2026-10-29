@@ -1,51 +1,55 @@
 # Mursyied · Portfolio
 
-My personal portfolio: a mechatronics engineer working on unmanned ground vehicles with ROS 2. Home, About and Work pages, a live Kuala Lumpur clock, dark and light themes, a background that follows the mouse, and a page for each project.
+My personal portfolio as a robotics software engineer working on autonomous ground robots with ROS 2. A futuristic glass design with Home, About and Work pages, a page per project, smooth page transitions, a live Kuala Lumpur clock, and dark and light modes.
 
-Built on the [Magic Portfolio](https://github.com/once-ui-system/magic-portfolio) template by [Once UI](https://once-ui.com) for [Next.js](https://nextjs.org).
+**Live:** https://muhamadmursyied.github.io/Mursyied-Portfolio/
 
-![Portfolio home page](docs/home.png)
+![Home page](docs/home.png)
+
+Built with [Astro](https://astro.build) as a static site: no framework on the page, about 4 KB of JavaScript for the animations, hosted free on GitHub Pages.
 
 ## Run it locally
 
-Needs Node.js 20.9 or later.
+Needs Node.js 20 or later.
 
 ```bash
-git clone https://github.com/MuhamadMursyied/mursyied-portfolio.git
-cd mursyied-portfolio
+git clone https://github.com/MuhamadMursyied/Mursyied-Portfolio.git
+cd Mursyied-Portfolio
 npm install
-npm run dev        # http://localhost:3000
+npm run dev        # http://localhost:4321/Mursyied-Portfolio
 ```
 
-Check a production build before pushing:
-
-```bash
-npx tsc --noEmit
-npm run build
-```
+`npm run build` type-checks everything and builds the site into `dist/`. GitHub runs the same command on every push.
 
 ## Where to edit things
 
 | What | File |
 | --- | --- |
-| Name, photo, headline, work experience, studies, certifications, skills | `src/resources/content.tsx` |
-| Colours, dark/light default, background effects, which pages are on | `src/resources/once-ui.config.ts` |
-| Projects (one file per project) | `src/app/work/projects/*.mdx` |
+| Name, headline, intro, experience, studies, certifications, skills, roadmap | `src/data/profile.ts` |
+| Projects (one Markdown file each) | `src/content/projects/*.md` |
 | Images | `public/images/` |
-| Skill and nav icons | `src/resources/icons.ts` |
+| Colours and the glass look | `src/styles/global.css` (variables at the top) |
+| Animations and interactions | `src/scripts/ui.ts` |
+| Icons | `src/components/Icon.astro` (brand icons from simple-icons, outline icons from Tabler) |
 
 ### Add a project
 
-Create `src/app/work/projects/my-project.mdx`:
+Create `src/content/projects/my-project.md`:
 
-```mdx
+```md
 ---
-title: "UGV autonomous navigation"
-publishedAt: "2026-11"          # "2026", "2026-11" or "2026-11-05"
+title: "UGV row following with Nav2"
+date: "2026-11"            # "2026", "2026-11" or "2026-11-05" (optional)
+org: "MIMOS Berhad"        # optional
 summary: "One or two lines shown on the card."
+tags: ["ROS 2", "Nav2"]
 images:
-  - "/images/projects/my-project-1.jpg"
-link: "https://github.com/MuhamadMursyied/..."   # optional
+  - "images/projects/my-project-1.jpg"   # put the files in public/images/projects
+links:
+  - label: "Video"
+    url: "https://youtube.com/..."
+featured: true             # optional: listed first
+draft: true                # optional: hide it from the site
 ---
 
 ## Overview
@@ -53,30 +57,21 @@ link: "https://github.com/MuhamadMursyied/..."   # optional
 What the problem was, what you did and how it turned out.
 ```
 
-Projects are sorted newest first. The newest one is shown large on the home page.
+Robotics projects currently use generated title cards as covers. Replace them with real photos or RViz/Gazebo screenshots (16:9) when you can.
 
-The robotics projects currently use generated title cards as covers (`public/images/projects/*.jpg`). Swap them for real photos or RViz/Gazebo screenshots when you have them, keeping a 16:9 shape.
+CV Builder and Kedai POS are kept as drafts (`draft: true`) and are not published; their screenshots are in `drafts/images/`.
 
-### Blog and gallery
+## Deploying
 
-Both pages are switched off. To use them, add `.mdx` posts to `src/app/blog/posts` or photos to `gallery.images` in `content.tsx`, then set `"/blog"` or `"/gallery"` to `true` in `once-ui.config.ts`.
+`.github/workflows/deploy.yml` builds and publishes the site to GitHub Pages on every push to `main`.
 
-## Deploy on Vercel
+One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
-1. Sign in at [vercel.com](https://vercel.com) with GitHub.
-2. **Add New → Project**, import `mursyied-portfolio`, keep the defaults and click **Deploy**.
-3. Every push to `main` redeploys the site.
+### Custom domain
 
-The site address used for SEO is picked up from Vercel automatically. With a custom domain (Vercel → Project → Settings → Domains), also set the environment variable `NEXT_PUBLIC_SITE_URL` to `https://your-domain`.
-
-## Changes from the template
-
-- My content, projects, skills with icons and a certifications section on the About page.
-- Skills shown as icon chips on the home page.
-- Dark theme by default (the template ignored the `theme` setting) and mouse-following background.
-- Project dates can be a year or a month (`"2024"`, `"2026-10"`) and display that way.
-- Blog, gallery, newsletter and password-protected pages turned off.
+1. Buy a domain (for example `mursyied.dev`) and add it under **Settings → Pages → Custom domain**, following GitHub's DNS instructions.
+2. In `astro.config.mjs`, set `site` to `https://mursyied.dev` and `base` to `"/"` (or set the `SITE_URL` and `BASE_PATH` environment variables in the workflow).
 
 ## License
 
-The template is licensed under [CC BY-NC 4.0](LICENSE): free for personal, non-commercial use with credit to Once UI, which the footer keeps. My content and images are my own.
+Code: MIT. Content, photos and project descriptions: © Muhamad Mursyied, all rights reserved.

@@ -1,0 +1,158 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import { certifications, competencies, experience, intro, person, skills, socials, studies } from "../data/profile";
+import { bold, url } from "../utils";
+---
+
+<Base title={`About · ${person.name}`} description={`Experience, studies and skills of ${person.name}, ${person.role}.`}>
+  <div class="page container">
+    <aside class="side">
+      <div class="profile glass hud reveal">
+        <img class="avatar" src={url(person.avatar)} alt={person.name} width="120" height="120" />
+        <h1>{person.name}</h1>
+        <p class="role mono">{person.role.toUpperCase()}</p>
+        <p class="loc"><Icon name="globe" size={15} /> {person.location}</p>
+        <ul class="langs">{person.languages.map((l) => <li class="chip">{l}</li>)}</ul>
+        <div class="links">
+          {socials.map((s) => (
+            <a class="btn" href={s.url} target={s.url.startsWith("http") ? "_blank" : undefined} rel="noopener"><Icon name={s.icon} size={16} />{s.label}</a>
+          ))}
+        </div>
+      </div>
+      <nav class="toc reveal" aria-label="On this page">
+        <a href="#intro">Introduction</a>
+        <a href="#experience">Experience</a>
+        <a href="#studies">Studies</a>
+        <a href="#certifications">Certifications</a>
+        <a href="#skills">Skills</a>
+      </nav>
+    </aside>
+
+    <div class="content">
+      <section id="intro" class="reveal">
+        <span class="label">Introduction</span>
+        <h2 class="gradient-text big">Hi, I'm {person.firstName}.</h2>
+        {intro.map((p) => <p class="lead" set:html={bold(p)} />)}
+        <ul class="chips competencies">{competencies.map((c) => <li class="chip">{c}</li>)}</ul>
+      </section>
+
+      <section id="experience">
+        <span class="label reveal">Experience</span>
+        <h2 class="reveal">Where I have worked</h2>
+        <ol class="timeline">
+          {experience.map((job) => (
+            <li class:list={["job glass spot reveal", { current: job.current }]}>
+              <div class="job-head">
+                <h3>{job.company}</h3>
+                <span class="mono when">{job.period}</span>
+              </div>
+              <p class="job-role">{job.role} · <span class="muted">{job.place}</span></p>
+              <ul>{job.points.map((pt) => <li>{pt}</li>)}</ul>
+              {job.tags.length > 0 && <ul class="tags job-tags">{job.tags.map((t) => <li>{t}</li>)}</ul>}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section id="studies">
+        <span class="label reveal">Studies</span>
+        <h2 class="reveal">Education</h2>
+        <div class="stack">
+          {studies.map((s) => (
+            <article class="glass spot card reveal">
+              <div class="job-head"><h3>{s.school}</h3><span class="mono when">{s.period}</span></div>
+              <p class="job-role">{s.qualification}</p>
+              {s.notes.length > 0 && <ul>{s.notes.map((n) => <li>{n}</li>)}</ul>}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="certifications">
+        <span class="label reveal">Certifications</span>
+        <h2 class="reveal">Training & certificates</h2>
+        <ul class="certs">
+          {certifications.map((c) => (
+            <li class="glass spot reveal">
+              <span class="cert-icon"><Icon name="cert" size={20} /></span>
+              <div>
+                <p class="cert-name">{c.name}</p>
+                {(c.issuer || c.year) && <p class="muted small">{[c.issuer, c.year].filter(Boolean).join(" · ")}</p>}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="skills">
+        <span class="label reveal">Skills</span>
+        <h2 class="reveal">Technical skills</h2>
+        <div class="stack">
+          {skills.map((g) => (
+            <article class="glass spot card reveal">
+              <h3>{g.group}</h3>
+              <ul class="chips">{g.items.map((s) => <li class="chip"><Icon name={s.icon} size={16} />{s.name}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page { display: grid; grid-template-columns: 300px 1fr; gap: 48px; padding-top: 110px; padding-bottom: 40px; align-items: start; }
+  .side { position: sticky; top: 96px; display: grid; gap: 18px; }
+  .profile { padding: 30px 24px; text-align: center; }
+  .avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px; box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.4), 0 0 40px rgba(34, 211, 238, 0.3); }
+  .profile h1 { font-size: 1.5rem; }
+  .role { color: var(--accent); font-size: 0.72rem; letter-spacing: 0.16em; margin: 6px 0 10px; }
+  .loc { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 0.88rem; }
+  .langs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; list-style: none; padding: 0; margin: 4px 0 18px; }
+  .langs .chip { font-size: 0.78rem; padding: 5px 10px; }
+  .links { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .links .btn { min-height: 40px; padding: 0 14px; font-size: 0.88rem; }
+  .toc { display: grid; gap: 2px; padding-left: 8px; }
+  .toc a { color: var(--muted); text-decoration: none; font-size: 0.9rem; padding: 6px 12px; border-left: 1px solid var(--glass-border); transition: color 0.2s, border-color 0.2s; }
+  .toc a:hover { color: var(--text); border-color: var(--accent); }
+
+  .content { display: grid; gap: 72px; min-width: 0; }
+  section { scroll-margin-top: 90px; }
+  section > h2 { font-size: clamp(1.7rem, 3.4vw, 2.3rem); margin: 12px 0 24px; }
+  h2.big { font-size: clamp(2.4rem, 6vw, 3.8rem); margin: 14px 0 22px; }
+  .lead { font-size: 1.08rem; color: var(--muted); max-width: 65ch; }
+
+  .timeline { list-style: none; padding: 0 0 0 26px; margin: 0; display: grid; gap: 18px; position: relative; }
+  .timeline::before { content: ""; position: absolute; left: 6px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(var(--cyan), var(--violet), transparent); opacity: 0.6; }
+  .job, .card { padding: 22px 24px; }
+  .job::before { content: ""; position: absolute; left: -26px; top: 28px; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 2px solid var(--cyan); }
+  .job.current::before { background: var(--cyan); box-shadow: 0 0 16px var(--cyan); animation: ping 2s ease-out infinite; }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.6); } 100% { box-shadow: 0 0 0 14px transparent; } }
+  .job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .job-head h3 { font-size: 1.2rem; }
+  .when { font-size: 0.78rem; color: var(--accent); letter-spacing: 0.04em; }
+  .job-role { color: var(--text); opacity: 0.9; margin: 4px 0 10px; font-size: 0.95rem; }
+  .job ul, .card ul { margin: 0; padding-left: 1.1em; color: var(--muted); }
+  .job li, .card li { margin-bottom: 4px; }
+  .stack { display: grid; gap: 16px; }
+  .card h3 { font-size: 1.1rem; margin-bottom: 12px; }
+  .card .job-head h3 { margin: 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0 !important; }
+  .chips .chip { font-size: 0.85rem; color: var(--text); margin: 0; }
+
+  .competencies { margin-top: 8px; }
+  .job-tags { margin-top: 14px; padding: 0 !important; }
+  .job .job-tags li { margin: 0; }
+  .certs { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .certs li { display: flex; gap: 14px; align-items: flex-start; padding: 18px; border-radius: var(--radius-sm); }
+  .cert-icon { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; color: var(--accent); background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.25); }
+  .cert-name { margin: 0; font-weight: 500; }
+  .small { font-size: 0.85rem; margin: 4px 0 0; }
+
+  @media (max-width: 900px) {
+    .page { grid-template-columns: 1fr; padding-top: 80px; }
+    .side { position: static; }
+    .toc { display: none; }
+  }
+</style>
