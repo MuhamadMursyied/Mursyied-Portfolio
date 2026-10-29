@@ -34,7 +34,13 @@ import { bold, url } from "../utils";
       <section id="intro" class="reveal">
         <span class="label">Introduction</span>
         <h2 class="gradient-text big">Hi, I'm {person.firstName}.</h2>
-        {intro.map((p) => <p class="lead" set:html={bold(p)} />)}
+        <div class="intro-row">
+          <div>{intro.map((p) => <p class="lead" set:html={bold(p)} />)}</div>
+          <figure class="field glass">
+            <img src={url("images/field.jpg")} alt={`${person.firstName} out in the field`} width="726" height="968" loading="lazy" />
+            <figcaption>Out in the field</figcaption>
+          </figure>
+        </div>
         <ul class="chips competencies">{competencies.map((c) => <li class="chip">{c}</li>)}</ul>
       </section>
 
@@ -113,6 +119,11 @@ import { bold, url } from "../utils";
   .page { display: grid; grid-template-columns: 300px 1fr; gap: 48px; padding-top: 110px; padding-bottom: 40px; align-items: start; }
   .side { position: sticky; top: 96px; display: grid; gap: 18px; }
   .profile { padding: 30px 24px; text-align: center; }
+  .intro-row { display: grid; grid-template-columns: 1fr 240px; gap: 28px; align-items: start; }
+  .field { margin: 6px 0 0; padding: 8px; border-radius: 18px; }
+  .field img { display: block; width: 100%; height: auto; border-radius: 12px; }
+  .field figcaption { font-size: 0.78rem; opacity: 0.7; text-align: center; padding-top: 6px; }
+  @media (max-width: 760px) { .intro-row { grid-template-columns: 1fr; } .field { max-width: 260px; } }
   .avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px; box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.4), 0 0 40px rgba(34, 211, 238, 0.3); }
   .profile h1 { font-size: 1.5rem; }
   .role { color: var(--accent); font-size: 0.72rem; letter-spacing: 0.16em; margin: 6px 0 10px; }

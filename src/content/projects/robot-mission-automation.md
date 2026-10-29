@@ -5,7 +5,8 @@ summary: "Software that runs a 58-point field coverage route from a single comma
 tags: ["Python", "FastAPI", "React", "Robotics"]
 featured: true
 images:
-  - "images/projects/robot-mission-automation.jpg"
+  - "images/projects/robot-mission-automation-1.jpg"
+  - "images/projects/robot-mission-automation-2.jpg"
 ---
 
 ## Overview

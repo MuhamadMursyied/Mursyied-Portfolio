@@ -23,10 +23,14 @@ export function bold(text: string): string {
   return escaped.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 }
 
-/** Newest first, featured projects on top. */
-export function sortProjects<T extends { data: { date?: string; featured: boolean } }>(list: T[]): T[] {
+/** Featured projects on top, trainings at the end, newest first in between (undated = current work). */
+export function sortProjects<T extends { data: { date?: string; featured: boolean; tags: string[] } }>(list: T[]): T[] {
+  const isTraining = (p: T) => Number(p.data.tags.includes("Training"));
   return [...list].sort(
-    (a, b) => Number(b.data.featured) - Number(a.data.featured) || (b.data.date ?? "").localeCompare(a.data.date ?? ""),
+    (a, b) =>
+      Number(b.data.featured) - Number(a.data.featured) ||
+      isTraining(a) - isTraining(b) ||
+      (b.data.date ?? "9999").localeCompare(a.data.date ?? "9999"),
   );
 }
 
