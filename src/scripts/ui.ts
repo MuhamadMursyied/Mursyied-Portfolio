@@ -57,6 +57,9 @@ function pointer() {
   on(window, "pointermove", (e: PointerEvent) => {
     backdrop?.style.setProperty("--cx", `${e.clientX}px`);
     backdrop?.style.setProperty("--cy", `${e.clientY}px`);
+    // the floating 3D shapes drift a little against the mouse (parallax)
+    backdrop?.parentElement?.style.setProperty("--px", (e.clientX / innerWidth - 0.5).toFixed(3));
+    backdrop?.parentElement?.style.setProperty("--py", (e.clientY / innerHeight - 0.5).toFixed(3));
     const card = (e.target as Element).closest?.<HTMLElement>(".spot");
     if (!card) return;
     const r = card.getBoundingClientRect();
