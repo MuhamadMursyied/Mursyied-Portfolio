@@ -50,7 +50,7 @@ const year = new Date().getFullYear();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@500;600;700;800&display=swap"
     />
     <!-- Apply the saved theme before the first paint so the page never flashes. -->
     <script is:inline>
@@ -59,7 +59,7 @@ const year = new Date().getFullYear();
         root.classList.add("js");
         var saved = null;
         try { saved = localStorage.getItem("theme"); } catch (e) {}
-        root.dataset.theme = saved === "light" ? "light" : "dark";
+        root.dataset.theme = saved === "dark" ? "dark" : "light";
       })();
     </script>
     <ClientRouter />
@@ -151,7 +151,7 @@ const year = new Date().getFullYear();
     font: 500 0.9rem var(--font-body); cursor: pointer; transition: color 0.2s, background 0.2s;
   }
   .nav-link:hover { color: var(--text); background: var(--glass-strong); }
-  .nav-link.active { color: var(--text); background: var(--glass-strong); box-shadow: inset 0 0 0 1px var(--glass-border), 0 0 18px rgba(34, 211, 238, 0.18); }
+  .nav-link.active { color: var(--text); background: var(--glass-strong); box-shadow: inset 0 0 0 1px var(--glass-border), 0 0 18px rgb(var(--cyan-rgb) / 0.18); }
   .nav-link.active svg { color: var(--accent); }
   .nav-sep { width: 1px; height: 20px; background: var(--glass-border); margin: 0 4px; }
   .theme-toggle { padding: 0 11px; }

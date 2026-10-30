@@ -80,10 +80,10 @@ const rows = [allSkills.slice(0, half), allSkills.slice(half)];
   .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; list-style: none; padding: 0; margin: 0; }
   .stage { padding: 28px; }
   .stage-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
-  .stage-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; color: var(--accent); background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.25); box-shadow: 0 0 24px rgba(34, 211, 238, 0.15); }
+  .stage-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; color: var(--accent); background: rgb(var(--cyan-rgb) / 0.08); border: 1px solid rgb(var(--cyan-rgb) / 0.25); box-shadow: 0 0 24px rgb(var(--cyan-rgb) / 0.15); }
   .stage-badge { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
   .stage-now .stage-badge { color: #34d399; }
-  .stage-next .stage-icon { color: var(--violet); border-color: rgba(167, 139, 250, 0.3); background: rgba(167, 139, 250, 0.08); box-shadow: 0 0 24px rgba(167, 139, 250, 0.15); }
+  .stage-next .stage-icon { color: var(--violet); border-color: rgb(var(--violet-rgb) / 0.3); background: rgb(var(--violet-rgb) / 0.08); box-shadow: 0 0 24px rgb(var(--violet-rgb) / 0.15); }
   .stage-future { opacity: 0.85; border-style: dashed; }
   .stage-future .stage-icon { color: var(--pink); border-color: rgba(244, 114, 182, 0.3); background: rgba(244, 114, 182, 0.08); box-shadow: none; }
   .stage h3 { font-size: 1.3rem; margin-bottom: 8px; }
