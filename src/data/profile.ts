@@ -3,11 +3,11 @@
 export const person = {
   name: "Muhamad Mursyied",
   firstName: "Mursyied",
-  role: "Robotics Software Engineer",
-  headline: "Making autonomous robots work in the real world",
+  role: "Robotics Engineer",
+  headline: "I design, wire and program robots",
   subline:
-    "I'm Mursyied, a robotics software engineer at MIMOS. I take autonomous ground robots from simulation to field deployment with ROS 2, Nav2 and NVIDIA Jetson.",
-  status: "Robotics Software Engineer at MIMOS",
+    "I'm Mursyied, a mechatronic engineer into robotics, automation, IoT and smart systems. I can take a machine from idea to field: design the parts, wire the electronics and write the code that makes it move.",
+  status: "Mechatronic engineer · robotics, automation, IoT",
   location: "Rawang, Selangor, Malaysia",
   timeZone: "Asia/Kuala_Lumpur",
   email: "muhamadmursyied@gmail.com",
@@ -22,20 +22,22 @@ export const socials = [
 
 // Paragraphs for the About page. **bold** is supported.
 export const intro = [
-  "I'm a robotics software engineer who makes **autonomous ground robots work reliably in real outdoor conditions**. I take robot software from simulation to field deployment, solve problems under tight test schedules, and work with cross-functional teams to deliver complete robot systems.",
-  "At **MIMOS Berhad** I look after the navigation system of the Hunter SE robot, fusing GNSS, IMU and wheel odometry for accurate positioning, and I build the software that runs whole field missions from a single command. Before that, at **SD Guthrie**, I worked on plantation UGVs: hardware integration on a Husky, the comms and LoRa-controlled Autobin for an autonomous fertiliser-spreading system, and a modular redesign of the Timmy UGV.",
+  "I'm a mechatronic engineer who loves building machines that move and think. I'm most interested in **robotics**, **automation**, **IoT and smart systems**, and **mechanical design**.",
+  "I can work on the whole machine. I **design** parts in CAD and 3D-print them, I **wire** the electronics, sensors, controllers and communication modules, and I **program** it all, from Arduino, FPGA and PLC to ROS 2 navigation on Linux. I test in simulation first, then in the field, and I like finding the real cause of a problem instead of patching it.",
   "Outside work I keep learning: training **YOLOv11** to count palm crowns and getting a **Livox Mid-360 LiDAR** running on ROS 2 for localization and sensor fusion.",
-  "I graduated in Mechatronic Engineering with Honours from **Universiti Malaysia Pahang Al-Sultan Abdullah (UMPSA)**, in a collaboration programme with Hochschule Karlsruhe (HKA), Germany, so my background covers the whole stack: mechanical design, electronics, embedded systems and software.",
+  "I graduated in Mechatronic Engineering with Honours from **Universiti Malaysia Pahang Al-Sultan Abdullah (UMPSA)**, in a collaboration programme with Hochschule Karlsruhe (HKA), Germany.",
 ];
 
 // Shown as chips on the About page.
 export const competencies = [
-  "Autonomous navigation",
-  "System integration",
-  "Field testing and validation",
+  "Mechanical design and 3D printing",
+  "Electrical wiring",
+  "Programming",
+  "Robotics and autonomous navigation",
+  "Automation and PLC",
+  "IoT and smart systems",
+  "Field testing",
   "Problem solving",
-  "Cross-functional teamwork",
-  "Technical documentation",
 ];
 
 // Where I'm heading: shown on the home page.
