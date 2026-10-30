@@ -15,12 +15,12 @@ const { bare = false } = Astro.props;
 const RADIUS = 6.5;
 const GROUND = 9.5;
 const COLORS: Record<string, string> = {
-  robotics: "#22d3ee",
-  career: "#a78bfa",
-  iot: "#34d399",
-  electronics: "#f59e0b",
-  software: "#f472b6",
-  academy: "#60a5fa",
+  robotics: "#5cb8ac",
+  career: "#a98be0",
+  iot: "#8cc58a",
+  electronics: "#f0a96e",
+  software: "#ee8fa8",
+  academy: "#7fb3e0",
 };
 
 const place = (angle: number, r = RADIUS) => ({ x: r * Math.cos((angle * Math.PI) / 180), y: r * Math.sin((angle * Math.PI) / 180) });
@@ -177,7 +177,7 @@ const slab =
     <svg viewBox="-620 -410 1240 760" preserveAspectRatio="xMidYMid slice" role="img" aria-label={`${person.firstName} in the middle, with six buildings around: ${districts.map((d) => d.name).join(", ")}`}>
       <defs>
         <clipPath id="me-clip"><circle r="30" /></clipPath>
-        <radialGradient id="me-glow"><stop offset="0" stop-color="#22d3ee" stop-opacity="0.5" /><stop offset="1" stop-color="#22d3ee" stop-opacity="0" /></radialGradient>
+        <radialGradient id="me-glow" style="color: var(--cyan)"><stop offset="0" stop-color="currentColor" stop-opacity="0.5" /><stop offset="1" stop-color="currentColor" stop-opacity="0" /></radialGradient>
       </defs>
       <g set:html={slab} />
       <g class="plaza">
@@ -229,12 +229,22 @@ const slab =
     --w-tag: rgba(10, 16, 32, 0.88); --w-road: rgba(148, 163, 184, 0.12);
     height: 100%;
   }
+  /* clay town: cream ground, soft pastel buildings */
   :root[data-theme="light"] .world {
-    --w-slab-t: #f3f6fc; --w-slab-l: #cfd8ea; --w-slab-r: #dfe6f3;
-    --w-wall-l: #dbe3f0; --w-wall-r: #edf1f8; --w-wall-t: #ffffff;
-    --w-leaf: #34d399; --w-leaf-hi: #6ee7b7; --w-trunk: #94a3b8; --w-shadow: rgba(30, 41, 80, 0.18);
-    --w-tag: rgba(255, 255, 255, 0.94); --w-road: rgba(71, 85, 105, 0.12);
+    --w-slab-t: #fbf4ea; --w-slab-l: #e2cdb6; --w-slab-r: #eedfcd;
+    --w-wall-l: #eadfd3; --w-wall-r: #f6efe7; --w-wall-t: #fffaf4;
+    --w-leaf: #8cc58a; --w-leaf-hi: #b9e0a8; --w-trunk: #b59a82; --w-shadow: rgba(148, 116, 88, 0.22);
+    --w-tag: #fcf8f2; --w-road: rgba(148, 116, 88, 0.14);
   }
+  :root[data-theme="dark"] .world {
+    --w-slab-t: #2f2a47; --w-slab-l: #1d1a2e; --w-slab-r: #26223b;
+    --w-wall-l: #3a3456; --w-wall-r: #463f66; --w-wall-t: #544c78;
+    --w-leaf: #8cc58a; --w-leaf-hi: #b9e0a8; --w-trunk: #8a7f9e; --w-shadow: rgba(0, 0, 0, 0.4);
+    --w-tag: #2c2843; --w-road: rgba(255, 255, 255, 0.07);
+  }
+  /* the whole island sits on a soft clay shadow */
+  .world-map svg { filter: drop-shadow(0 24px 30px var(--w-shadow)); }
+  .world .tag rect, .world .me-tag rect, .world .tag-mini circle { filter: drop-shadow(3px 4px 5px var(--w-shadow)); }
   .world-map { position: relative; padding: 0; overflow: hidden; height: 100%; }
   .world-map svg { display: block; width: 100%; height: 100%; }
   .world-map.bare { overflow: visible; }
@@ -243,8 +253,8 @@ const slab =
   .world .slab-t { fill: var(--w-slab-t); stroke: var(--glass-border); }
   .world .slab-l { fill: var(--w-slab-l); }
   .world .slab-r { fill: var(--w-slab-r); }
-  .world .plaza-ring { fill: rgba(34, 211, 238, 0.05); stroke: rgba(34, 211, 238, 0.35); stroke-dasharray: 6 8; }
-  .world .plaza-in { fill: rgba(34, 211, 238, 0.07); stroke: rgba(34, 211, 238, 0.25); }
+  .world .plaza-ring { fill: rgb(var(--cyan-rgb) / 0.05); stroke: rgb(var(--cyan-rgb) / 0.35); stroke-dasharray: 6 8; }
+  .world .plaza-in { fill: rgb(var(--cyan-rgb) / 0.07); stroke: rgb(var(--cyan-rgb) / 0.25); }
   .world .pulse { fill: url(#me-glow); transform-box: fill-box; transform-origin: center; animation: w-pulse 3s ease-out infinite; }
   .world .pulse.two { animation-delay: 1.5s; }
   .world .road-bed { stroke: var(--w-road); stroke-width: 26; stroke-linecap: round; }
@@ -270,7 +280,7 @@ const slab =
   .world .sig.two { animation-delay: 1.2s; }
   .world .screen { fill: #070b16; stroke: color-mix(in srgb, var(--c) 70%, transparent); }
   .world .code { fill: var(--c); }
-  .world .code.alt { fill: #22d3ee; }
+  .world .code.alt { fill: var(--cyan); }
   .world .col-l, .world .col-r, .world .col-t { fill: var(--w-wall-t); }
   .world .roof { fill: var(--w-wall-t); stroke: color-mix(in srgb, var(--c) 40%, transparent); }
 
@@ -280,12 +290,12 @@ const slab =
   .world .leaf-hi { fill: var(--w-leaf-hi); opacity: 0.7; }
 
   .world .leg { fill: #334155; }
-  .world .torso, .world .arm { fill: #22d3ee; }
+  .world .torso, .world .arm { fill: var(--cyan); }
   .world .head { fill: #f1c9a5; }
   .world .hair { fill: #1e293b; }
   .world .me-body { animation: w-idle 3s ease-in-out infinite; }
-  .world .me-ring { fill: none; stroke: #22d3ee; stroke-width: 3; filter: drop-shadow(0 0 8px #22d3ee); }
-  .world .me-tag rect { fill: var(--w-tag); stroke: rgba(34, 211, 238, 0.6); }
+  .world .me-ring { fill: none; stroke: var(--cyan); stroke-width: 3; filter: drop-shadow(0 0 8px var(--cyan)); }
+  .world .me-tag rect { fill: var(--w-tag); stroke: rgb(var(--cyan-rgb) / 0.6); }
   .world .me-tag text { fill: var(--text); font: 600 13px var(--font-body); text-anchor: middle; }
   .world .me-tag { animation: w-bob 3s ease-in-out infinite; }
 
@@ -302,9 +312,9 @@ const slab =
   .world .rb-l { fill: #1f2937; } .world .rb-r { fill: #2b3647; } .world .rb-t { fill: #3b4a60; }
   .world .rd-l { fill: #cbd5e1; } .world .rd-r { fill: #e2e8f0; } .world .rd-t { fill: #f8fafc; }
   .world .rw-l, .world .rw-r, .world .rw-t { fill: #0b0f19; }
-  .world .rl-l, .world .rl-r, .world .rl-t { fill: #22d3ee; }
+  .world .rl-l, .world .rl-r, .world .rl-t { fill: var(--cyan); }
   .world .rm-l, .world .rm-r, .world .rm-t { fill: #475569; }
-  .world .r-ant { fill: #22d3ee; animation: w-blink 1.4s ease-in-out infinite; }
+  .world .r-ant { fill: var(--cyan); animation: w-blink 1.4s ease-in-out infinite; }
 
   @keyframes w-pulse { from { transform: scale(0.4); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
   @keyframes w-flow { to { stroke-dashoffset: -18; } }

@@ -1,57 +1,80 @@
-/* Futuristic glass theme. Colours live in the variables below; light mode only swaps them. */
+/* Claymorphism theme: soft, puffy shapes in pastel tones, lit from the top left.
+   Colours and shadows live in the variables below; dark mode ("clay at night") only swaps them. */
 
 :root {
-  --bg: #04060d;
-  --text: #e8efff;
-  --muted: #8d9ab8;
-  --faint: #56627e;
-  --cyan: #22d3ee;
-  --violet: #a78bfa;
-  --pink: #f472b6;
-  --accent: var(--cyan);
-  --glass: rgba(255, 255, 255, 0.045);
-  --glass-strong: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.11);
-  --glass-highlight: rgba(255, 255, 255, 0.22);
-  --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-  --glow: 0 0 0 1px rgba(34, 211, 238, 0.35), 0 0 32px rgba(34, 211, 238, 0.18);
-  --grid-line: rgba(120, 160, 255, 0.07);
+  --bg: #f6efe6;
+  --text: #2e2a47;
+  --muted: #6a6582;
+  --faint: #a59fb6;
+  /* pastel palette (names kept from the old theme so components stay the same) */
+  --cyan: #5cb8ac; --cyan-rgb: 92 184 172;     /* mint */
+  --violet: #a98be0; --violet-rgb: 169 139 224; /* lilac */
+  --pink: #ee9fb3;                              /* rose */
+  --peach: #f3bf94; --sky: #93c2e6; --sage: #a8cf9a;
+  --accent: #2f8b80;  /* darker mint for text and icons, readable on cream */
+  --on-accent: #1f2a3a;
+  --clay: #fcf8f2;            /* card surface */
+  --clay-sunk: #efe6da;       /* pressed / inset surface */
+  --clay-light: rgba(255, 255, 255, 0.95);
+  --clay-dark: rgba(148, 116, 88, 0.24);
+  --clay-shadow:
+    14px 18px 36px rgba(148, 116, 88, 0.22),
+    -10px -10px 24px rgba(255, 255, 255, 0.9),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.95),
+    inset -6px -8px 14px rgba(148, 116, 88, 0.14);
+  --clay-shadow-sm:
+    6px 8px 16px rgba(148, 116, 88, 0.2),
+    -5px -5px 12px rgba(255, 255, 255, 0.85),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.95),
+    inset -3px -4px 8px rgba(148, 116, 88, 0.14);
+  --clay-shadow-in: inset 4px 5px 10px rgba(148, 116, 88, 0.22), inset -4px -4px 10px rgba(255, 255, 255, 0.9);
+  /* old names, mapped onto clay so every page follows */
+  --glass: var(--clay);
+  --glass-strong: var(--clay);
+  --glass-border: rgba(148, 116, 88, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --shadow: var(--clay-shadow);
+  --glow: 0 0 0 3px rgb(var(--cyan-rgb) / 0.35), 8px 10px 22px rgba(148, 116, 88, 0.22);
+  --grid-line: rgba(148, 116, 88, 0.05);
   --blob-opacity: 0.55;
-  --sheen-1: rgba(255, 255, 255, 0.07);
-  --sheen-2: rgba(167, 139, 250, 0.08);
-  --glass-edge: rgba(255, 255, 255, 0.06);
-  --glass-shade: rgba(0, 0, 0, 0.35);
-  --glass-inner: rgba(120, 180, 255, 0.04);
-  --orb-opacity: 0.75;
-  --radius: 22px;
-  --radius-sm: 12px;
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-head: "Space Grotesk", var(--font-body);
+  --orb-opacity: 1;
+  --radius: 30px;
+  --radius-sm: 16px;
+  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-head: "Fredoka", var(--font-body);
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
-:root[data-theme="light"] {
-  --bg: #eef2fb;
-  --text: #0c1326;
-  --muted: #4c5875;
-  --faint: #8a94ad;
-  --accent: #0891b2;
-  --glass: rgba(255, 255, 255, 0.55);
-  --glass-strong: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(15, 23, 42, 0.1);
-  --glass-highlight: rgba(255, 255, 255, 0.9);
-  --shadow: 0 20px 50px rgba(30, 41, 80, 0.12);
-  --glow: 0 0 0 1px rgba(8, 145, 178, 0.35), 0 0 28px rgba(8, 145, 178, 0.15);
-  --grid-line: rgba(30, 60, 140, 0.07);
-  --blob-opacity: 0.35;
-  --sheen-1: rgba(255, 255, 255, 0.6);
-  --sheen-2: rgba(167, 139, 250, 0.14);
-  --glass-edge: rgba(255, 255, 255, 0.7);
-  --glass-shade: rgba(30, 41, 80, 0.08);
-  --glass-inner: rgba(255, 255, 255, 0.35);
-  --orb-opacity: 1;
-  color-scheme: light;
+:root[data-theme="dark"] {
+  --bg: #1f1c30;
+  --text: #f3eefb;
+  --muted: #b2abc8;
+  --faint: #7d7695;
+  --accent: #7fd6ca;
+  --on-accent: #1f1c30;
+  --clay: #2c2843;
+  --clay-sunk: #241f38;
+  --clay-light: rgba(255, 255, 255, 0.07);
+  --clay-dark: rgba(0, 0, 0, 0.45);
+  --clay-shadow:
+    14px 18px 36px rgba(0, 0, 0, 0.45),
+    -8px -8px 22px rgba(255, 255, 255, 0.035),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.07),
+    inset -6px -8px 14px rgba(0, 0, 0, 0.35);
+  --clay-shadow-sm:
+    6px 8px 16px rgba(0, 0, 0, 0.4),
+    -4px -4px 10px rgba(255, 255, 255, 0.03),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.08),
+    inset -3px -4px 8px rgba(0, 0, 0, 0.3);
+  --clay-shadow-in: inset 4px 5px 10px rgba(0, 0, 0, 0.4), inset -3px -3px 8px rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-highlight: rgba(255, 255, 255, 0.1);
+  --glow: 0 0 0 3px rgb(var(--cyan-rgb) / 0.4), 8px 10px 22px rgba(0, 0, 0, 0.4);
+  --grid-line: rgba(255, 255, 255, 0.025);
+  --blob-opacity: 0.22;
+  --orb-opacity: 0.85;
+  color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -61,189 +84,174 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font: 400 16px/1.65 var(--font-body);
+  font: 500 16px/1.65 var(--font-body);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
-h1, h2, h3 { font-family: var(--font-head); line-height: 1.1; letter-spacing: -0.02em; margin: 0; }
+h1, h2, h3 { font-family: var(--font-head); font-weight: 600; line-height: 1.1; letter-spacing: -0.01em; margin: 0; }
 p { margin: 0 0 1em; }
 a { color: inherit; }
 img { display: block; max-width: 100%; }
-strong { color: var(--text); font-weight: 600; }
-::selection { background: rgba(34, 211, 238, 0.35); }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+strong { color: var(--text); font-weight: 700; }
+::selection { background: rgb(var(--cyan-rgb) / 0.35); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
 
 .container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 20px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .mono { font-family: var(--font-mono); }
 .muted { color: var(--muted); }
 
-/* ---------- background: aurora blobs, grid and a light that follows the mouse ---------- */
+/* ---------- background: soft pastel light, floating clay shapes ---------- */
 
 .backdrop { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 .blob {
   position: absolute; width: 52vmax; height: 52vmax; border-radius: 50%;
-  filter: blur(90px); opacity: var(--blob-opacity); mix-blend-mode: screen;
-  animation: drift 26s ease-in-out infinite alternate;
+  filter: blur(90px); opacity: var(--blob-opacity);
+  animation: drift 30s ease-in-out infinite alternate;
 }
-:root[data-theme="light"] .blob { mix-blend-mode: multiply; }
-.blob.one { background: radial-gradient(circle, rgba(34, 211, 238, 0.55), transparent 60%); top: -22vmax; left: -12vmax; }
-.blob.two { background: radial-gradient(circle, rgba(139, 92, 246, 0.5), transparent 60%); top: 10vmax; right: -20vmax; animation-duration: 32s; animation-delay: -8s; }
-.blob.three { background: radial-gradient(circle, rgba(236, 72, 153, 0.32), transparent 60%); bottom: -30vmax; left: 20vmax; animation-duration: 38s; animation-delay: -16s; }
+.blob.one { background: radial-gradient(circle, rgb(var(--cyan-rgb) / 0.5), transparent 60%); top: -22vmax; left: -12vmax; }
+.blob.two { background: radial-gradient(circle, rgb(var(--violet-rgb) / 0.45), transparent 60%); top: 10vmax; right: -20vmax; animation-duration: 36s; animation-delay: -8s; }
+.blob.three { background: radial-gradient(circle, rgba(243, 191, 148, 0.55), transparent 60%); bottom: -30vmax; left: 20vmax; animation-duration: 40s; animation-delay: -16s; }
 @keyframes drift {
   0% { transform: translate(0, 0) scale(1); }
   50% { transform: translate(6vmax, 4vmax) scale(1.1); }
   100% { transform: translate(-4vmax, 8vmax) scale(0.95); }
 }
-/* 3D soft realism: clay-like shapes lit from the top left, floating behind the glass.
-   The glass panels blur them, which gives the frosted, refracted look. */
+
+/* Clay shapes: matte, puffy, pastel. One soft light from the top left. */
 .orb { position: absolute; opacity: var(--orb-opacity); transform: translate(calc(var(--px, 0) * var(--depth)), calc(var(--py, 0) * var(--depth))); transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
 .orb > i { display: block; width: 100%; height: 100%; animation: float var(--t, 14s) ease-in-out infinite alternate; }
 .orb.sphere { width: clamp(80px, 10vw, 160px); aspect-ratio: 1; top: 9%; right: 3%; --depth: 30px; }
 .orb.sphere > i {
   border-radius: 50%;
-  background: radial-gradient(circle at 32% 28%, #f0fdff 0%, #7ee8fa 18%, #22b8d6 45%, #0b5d7a 78%, #062c40 100%);
-  box-shadow: 0 40px 60px -20px rgba(6, 44, 64, 0.6), inset -12px -16px 30px rgba(4, 30, 50, 0.45);
+  background: radial-gradient(circle at 34% 30%, #ffe9dc 0%, #f7c6a7 30%, #ec9f86 70%, #c97b66 100%);
+  box-shadow: 18px 26px 40px rgba(148, 90, 70, 0.28), inset -10px -14px 24px rgba(160, 80, 60, 0.25), inset 8px 8px 16px rgba(255, 255, 255, 0.55);
 }
-.orb.torus { width: clamp(120px, 15vw, 230px); aspect-ratio: 1; top: 12%; left: -2%; --depth: -40px; --t: 18s; filter: blur(1.5px); }
+.orb.torus { width: clamp(120px, 14vw, 210px); aspect-ratio: 1; top: 12%; left: -2%; --depth: -40px; --t: 18s; }
 .orb.torus > i {
   border-radius: 50%;
-  background: radial-gradient(circle, transparent 0 33%, #3b2a8a 34%, #7c5cf0 40%, #e9e1ff 46%, #a78bfa 51%, #5b3fc4 59%, #2a1d63 66%, transparent 67%);
-  filter: drop-shadow(0 30px 30px rgba(42, 29, 99, 0.5));
+  background: radial-gradient(circle, transparent 0 33%, #6fb5aa 34%, #9dd8cd 41%, #d8f3ee 46%, #a7ddd3 51%, #6cb2a6 59%, #4f9488 66%, transparent 67%);
+  filter: drop-shadow(10px 22px 22px rgba(60, 120, 110, 0.3));
   animation-name: float-spin;
 }
-.orb.pill { width: clamp(50px, 6vw, 95px); aspect-ratio: 1 / 2.2; bottom: 4%; right: 4%; --depth: 18px; --t: 16s; filter: blur(4px); }
+.orb.pill { width: clamp(50px, 6vw, 95px); aspect-ratio: 1 / 2.2; bottom: 5%; right: 4%; --depth: 18px; --t: 16s; }
 .orb.pill > i {
   border-radius: 999px; rotate: 35deg;
-  background: linear-gradient(100deg, #fbcfe8 0%, #f472b6 30%, #be185d 75%, #6b0f3a 100%);
-  box-shadow: 0 30px 40px -12px rgba(107, 15, 58, 0.5), inset 6px 8px 14px rgba(255, 255, 255, 0.45), inset -8px -10px 18px rgba(80, 8, 40, 0.5);
+  background: linear-gradient(100deg, #efe6ff 0%, #c9b5f2 30%, #a68ade 72%, #8569c2 100%);
+  box-shadow: 14px 20px 30px rgba(110, 80, 170, 0.28), inset 6px 8px 14px rgba(255, 255, 255, 0.6), inset -8px -10px 18px rgba(90, 60, 150, 0.3);
 }
-.orb.dot { width: clamp(26px, 3vw, 46px); aspect-ratio: 1; top: 5%; left: 24%; --depth: 50px; --t: 11s; filter: blur(5px); }
+.orb.dot { width: clamp(30px, 3.4vw, 54px); aspect-ratio: 1; top: 5%; left: 24%; --depth: 50px; --t: 11s; }
 .orb.dot > i {
   border-radius: 50%;
-  background: radial-gradient(circle at 32% 28%, #fff 0%, #ddd6fe 20%, #8b5cf6 60%, #3b1f8f 100%);
-  box-shadow: 0 20px 30px -10px rgba(59, 31, 143, 0.6);
+  background: radial-gradient(circle at 34% 30%, #ffffff 0%, #cfe6f7 30%, #93c2e6 70%, #6e9ec4 100%);
+  box-shadow: 8px 12px 20px rgba(70, 110, 150, 0.3);
 }
 @keyframes float { from { transform: translateY(-14px); } to { transform: translateY(16px); } }
 @keyframes float-spin { from { transform: translateY(-10px) rotateX(58deg) rotateZ(0deg); } to { transform: translateY(14px) rotateX(62deg) rotateZ(30deg); } }
 @media (max-width: 700px) { .orb.dot, .orb.pill, .orb.torus { display: none; } }
-/* on the full-screen home the world is the star, so the shapes step back */
-body:has(.hud-page) .orb { opacity: calc(var(--orb-opacity) * 0.45); }
+/* on the full-screen home the city is the star, so the shapes step back */
+body:has(.hud-page) .orb { opacity: calc(var(--orb-opacity) * 0.6); }
+body:has(.hud-page) .orb.pill { display: none; }
 
 .bg-grid {
   position: absolute; inset: 0;
-  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+  background-image: radial-gradient(var(--grid-line) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
 }
 .cursor-light {
   position: absolute; inset: 0;
-  background: radial-gradient(500px circle at var(--cx, 50%) var(--cy, -20%), rgba(34, 211, 238, 0.09), transparent 60%);
+  background: radial-gradient(500px circle at var(--cx, 50%) var(--cy, -20%), rgba(255, 255, 255, 0.35), transparent 60%);
 }
+:root[data-theme="dark"] .cursor-light { background: radial-gradient(500px circle at var(--cx, 50%) var(--cy, -20%), rgb(var(--violet-rgb) / 0.08), transparent 60%); }
 .noise {
-  position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: overlay;
+  position: absolute; inset: 0; opacity: 0.04; mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ---------- glass ---------- */
+/* ---------- clay panels (the class is still called .glass so no markup changes) ---------- */
 
-/* Glassmorphism 2.0: thick frost, a light edge on top, a soft rainbow sheen like light through glass */
 .glass {
   position: relative;
-  background:
-    radial-gradient(120% 70% at 0% 0%, var(--sheen-1), transparent 55%),
-    radial-gradient(90% 60% at 100% 100%, var(--sheen-2), transparent 60%),
-    linear-gradient(160deg, var(--glass-strong), var(--glass) 45%);
-  border: 1px solid var(--glass-border);
+  background: color-mix(in srgb, var(--tint, var(--clay)) 26%, var(--clay));
+  border: 0;
   border-radius: var(--radius);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  box-shadow:
-    var(--shadow),
-    inset 0 1px 0 var(--glass-highlight),
-    inset 1px 0 0 var(--glass-edge),
-    inset 0 -1px 0 var(--glass-shade),
-    inset 0 0 40px var(--glass-inner);
+  box-shadow: var(--clay-shadow);
 }
-/* light that follows the mouse inside a panel (set by src/scripts/ui.ts) */
+/* pastel tints for panels in a row: add .tint-1 ... .tint-5 or let lists cycle them */
+.tint-1 { --tint: var(--cyan); } .tint-2 { --tint: var(--peach); } .tint-3 { --tint: var(--violet); }
+.tint-4 { --tint: var(--sky); } .tint-5 { --tint: var(--pink); } .tint-6 { --tint: var(--sage); }
+/* lists of cards cycle through the pastels, like a box of clay */
+:is(.grid > li, .skill-group):nth-child(6n+1) :is(.card), .skill-group:nth-child(6n+1) { --tint: var(--cyan); }
+:is(.grid > li):nth-child(6n+2) .card, .skill-group:nth-child(6n+2) { --tint: var(--peach); }
+:is(.grid > li):nth-child(6n+3) .card, .skill-group:nth-child(6n+3) { --tint: var(--violet); }
+:is(.grid > li):nth-child(6n+4) .card, .skill-group:nth-child(6n+4) { --tint: var(--sky); }
+:is(.grid > li):nth-child(6n+5) .card, .skill-group:nth-child(6n+5) { --tint: var(--pink); }
+:is(.grid > li):nth-child(6n+6) .card, .skill-group:nth-child(6n+6) { --tint: var(--sage); }
+.profile.glass { --tint: var(--cyan); }
+.contact.glass { --tint: var(--peach); }
+:root[data-theme="dark"] .glass { background: color-mix(in srgb, var(--tint, var(--clay)) 10%, var(--clay)); }
+
+/* soft light that follows the mouse inside a panel (set by src/scripts/ui.ts) */
 .spot::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
   opacity: 0; transition: opacity 0.3s;
-  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(34, 211, 238, 0.12), transparent 60%);
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.35), transparent 60%);
 }
+:root[data-theme="dark"] .spot::after { background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.06), transparent 60%); }
 .spot:hover::after { opacity: 1; }
-.spot:hover { border-color: rgba(34, 211, 238, 0.35); }
 
-/* HUD corner brackets */
-.hud::before {
-  content: ""; position: absolute; inset: 10px; pointer-events: none; border-radius: calc(var(--radius) - 8px);
-  --c: rgba(34, 211, 238, 0.55);
-  background:
-    linear-gradient(var(--c), var(--c)) top left / 14px 1px no-repeat,
-    linear-gradient(var(--c), var(--c)) top left / 1px 14px no-repeat,
-    linear-gradient(var(--c), var(--c)) top right / 14px 1px no-repeat,
-    linear-gradient(var(--c), var(--c)) top right / 1px 14px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom left / 14px 1px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom left / 1px 14px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom right / 14px 1px no-repeat,
-    linear-gradient(var(--c), var(--c)) bottom right / 1px 14px no-repeat;
-}
+/* the old HUD corner brackets don't fit clay, so they are hidden */
+.hud::before { content: none; }
 
 /* ---------- small parts ---------- */
 
 .label {
   display: inline-flex; align-items: center; gap: 10px;
-  font: 500 0.75rem/1 var(--font-mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent);
+  font: 700 0.75rem/1 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent);
 }
-.label::before { content: ""; width: 22px; height: 1px; background: currentColor; }
+.label::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: currentColor; box-shadow: var(--clay-shadow-sm); }
 
 .gradient-text {
-  background: linear-gradient(100deg, var(--text) 20%, var(--cyan) 55%, var(--violet) 80%);
+  background: linear-gradient(100deg, var(--text) 25%, var(--accent) 60%, #8a6bd1 85%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   background-size: 200% 100%; animation: shimmer 8s ease-in-out infinite alternate;
 }
-:root[data-theme="light"] .gradient-text { background-image: linear-gradient(100deg, var(--text) 20%, #0891b2 55%, #7c3aed 80%); }
+:root[data-theme="dark"] .gradient-text { background-image: linear-gradient(100deg, var(--text) 25%, #7fd6ca 60%, #c4aef5 85%); }
 @keyframes shimmer { to { background-position: 100% 0; } }
 
-/* buttons feel like soft, pressable 3D pills: lit from the top, shaded underneath */
+/* puffy clay buttons: raised, and pressed in when clicked */
 .btn {
-  display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 20px;
-  border-radius: 999px; border: 1px solid var(--glass-border);
-  background: linear-gradient(180deg, var(--glass-strong), var(--glass));
-  color: var(--text); text-decoration: none; font: 500 0.95rem var(--font-body);
-  backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 var(--glass-highlight), inset 0 -2px 4px var(--glass-shade);
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 22px;
+  border-radius: 999px; border: 0;
+  background: var(--clay); color: var(--text); text-decoration: none; font: 700 0.95rem var(--font-body);
+  box-shadow: var(--clay-shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;
 }
-.btn:hover { transform: translateY(-2px); box-shadow: var(--glow), 0 12px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 var(--glass-highlight); border-color: transparent; }
-.btn:active { transform: translateY(1px); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 2px 6px var(--glass-shade); }
+.btn:hover { transform: translateY(-2px) scale(1.02); }
+.btn:active { transform: translateY(1px) scale(0.98); box-shadow: var(--clay-shadow-in); }
 .btn.primary {
-  border: 0; color: #031018; font-weight: 600;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 48%),
-    linear-gradient(110deg, var(--cyan), #67e8f9 40%, var(--violet));
+  color: var(--on-accent);
+  background: linear-gradient(135deg, #a9e3d9, var(--cyan) 55%, #8fc6e6);
   box-shadow:
-    0 10px 30px rgba(34, 211, 238, 0.35),
-    0 3px 6px rgba(0, 0, 0, 0.25),
-    inset 0 1px 1px rgba(255, 255, 255, 0.7),
-    inset 0 -3px 6px rgba(76, 29, 149, 0.35);
+    8px 12px 24px rgb(var(--cyan-rgb) / 0.35),
+    -4px -4px 12px rgba(255, 255, 255, 0.6),
+    inset 3px 3px 6px rgba(255, 255, 255, 0.65),
+    inset -4px -5px 10px rgba(40, 110, 100, 0.3);
 }
-.btn.primary:hover { box-shadow: 0 14px 44px rgba(34, 211, 238, 0.5), 0 4px 8px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.7), inset 0 -3px 6px rgba(76, 29, 149, 0.35); }
+:root[data-theme="dark"] .btn.primary { box-shadow: 8px 12px 24px rgba(0, 0, 0, 0.4), inset 3px 3px 6px rgba(255, 255, 255, 0.5), inset -4px -5px 10px rgba(40, 110, 100, 0.35); }
 
 .chip {
-  display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
-  background: var(--glass); border: 1px solid var(--glass-border); font-size: 0.9rem; white-space: nowrap;
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  box-shadow: inset 0 1px 0 var(--glass-highlight), 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 15px; border-radius: 999px;
+  background: var(--clay); border: 0; font-size: 0.9rem; font-weight: 600; white-space: nowrap;
+  box-shadow: var(--clay-shadow-sm);
+  transition: box-shadow 0.2s, transform 0.2s;
 }
 .chip svg { color: var(--accent); }
-.chip:hover { border-color: rgba(34, 211, 238, 0.45); box-shadow: 0 0 20px rgba(34, 211, 238, 0.15); transform: translateY(-2px); }
+.chip:hover { transform: translateY(-2px); }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
 .tags li {
-  font: 500 0.72rem/1 var(--font-mono); padding: 6px 9px; border-radius: 6px;
-  color: var(--muted); background: rgba(34, 211, 238, 0.06); border: 1px solid rgba(34, 211, 238, 0.15);
+  font: 700 0.72rem/1 var(--font-body); padding: 7px 10px; border-radius: 999px;
+  color: var(--muted); background: var(--clay-sunk); box-shadow: var(--clay-shadow-in);
 }
 
 .section { padding: 72px 0; }

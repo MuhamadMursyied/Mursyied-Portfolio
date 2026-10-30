@@ -124,7 +124,7 @@ import { bold, url } from "../utils";
   .field img { display: block; width: 100%; height: auto; border-radius: 12px; }
   .field figcaption { font-size: 0.78rem; opacity: 0.7; text-align: center; padding-top: 6px; }
   @media (max-width: 760px) { .intro-row { grid-template-columns: 1fr; } .field { max-width: 260px; } }
-  .avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px; box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.4), 0 0 40px rgba(34, 211, 238, 0.3); }
+  .avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px; box-shadow: 0 0 0 3px rgb(var(--cyan-rgb) / 0.4), 0 0 40px rgb(var(--cyan-rgb) / 0.3); }
   .profile h1 { font-size: 1.5rem; }
   .role { color: var(--accent); font-size: 0.72rem; letter-spacing: 0.16em; margin: 6px 0 10px; }
   .loc { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 0.88rem; }
@@ -150,7 +150,7 @@ import { bold, url } from "../utils";
   .job, .card { padding: 22px 24px; }
   .job::before { content: ""; position: absolute; left: -26px; top: 28px; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 2px solid var(--cyan); }
   .job.current::before { background: var(--cyan); box-shadow: 0 0 16px var(--cyan); animation: ping 2s ease-out infinite; }
-  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.6); } 100% { box-shadow: 0 0 0 14px transparent; } }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgb(var(--cyan-rgb) / 0.6); } 100% { box-shadow: 0 0 0 14px transparent; } }
   .job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
   .job-head h3 { font-size: 1.2rem; }
   .when { font-size: 0.78rem; color: var(--accent); letter-spacing: 0.04em; }
@@ -168,7 +168,7 @@ import { bold, url } from "../utils";
   .job .job-tags li { margin: 0; }
   .certs { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
   .certs li { display: flex; gap: 14px; align-items: flex-start; padding: 18px; border-radius: var(--radius-sm); }
-  .cert-icon { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; color: var(--accent); background: rgba(34, 211, 238, 0.08); border: 1px solid rgba(34, 211, 238, 0.25); }
+  .cert-icon { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; color: var(--accent); background: rgb(var(--cyan-rgb) / 0.08); border: 1px solid rgb(var(--cyan-rgb) / 0.25); }
   .cert-name { margin: 0; font-weight: 500; }
   .small { font-size: 0.85rem; margin: 4px 0 0; }
 
