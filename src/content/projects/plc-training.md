@@ -1,7 +1,8 @@
 ---
 title: "PLC programming with IndraWorks"
+date: "2024"
 org: "Bosch Rexroth"
-summary: "PLC programming training on IndraWorks in Ladder Diagram, Structured Text and Function Block Diagram, with 20 participants."
+summary: "Training by Bosch Rexroth on programming PLCs, the small computers that run factory machines, in three programming styles."
 tags: ["Training", "PLC", "Automation"]
 images:
   - "images/projects/plc-training-1.jpg"
@@ -11,8 +12,4 @@ images:
   - "images/projects/plc-training-5.jpg"
 ---
 
-## Overview
-
-- PLC programming training with **IndraWorks** (Bosch Rexroth, ctrlX).
-- Covered **Ladder Diagram (LD)**, **Structured Text (ST)** and **Function Block Diagram (FBD)**.
-- **20 participants**.
+**Bosch Rexroth** training on **PLCs**, the small industrial computers that run factory machines. We programmed them in IndraWorks using three styles: **Ladder Diagram**, **Structured Text** and **Function Block Diagram**. 20 participants.

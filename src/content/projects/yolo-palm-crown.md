@@ -1,21 +1,19 @@
 ---
 title: "Palm crown detection and counting with YOLOv11"
 org: "Self learning"
-summary: "Trained a YOLOv11s model in Google Colab with a Roboflow dataset to detect and count palm crowns."
+summary: "Counting palm trees by hand is slow. I trained an AI model to find and count palm tree tops in images."
 tags: ["Computer vision", "Python", "AI"]
 images:
   - "images/projects/yolo-palm-crown-1.jpg"
   - "images/projects/yolo-palm-crown-2.jpg"
 ---
 
-## Overview
-
-A self-learning project in computer vision.
+Counting palm trees across an estate by hand is slow. I taught a computer to do it from pictures.
 
 ## What I did
 
-- Trained **YOLOv11s** in **Google Colab**.
-- Prepared the dataset with **Roboflow**.
-- Used the model to **detect and count palm crowns**.
+- **Marked palm tree tops** on a set of images to teach the model.
+- **Trained an AI model** (YOLOv11) on them.
+- Used it to **find and count** palm tree tops in new images.
 
-**Tools:** YOLOv11, Google Colab, Roboflow, Python
+**Stack:** Python, YOLOv11, Roboflow, Google Colab

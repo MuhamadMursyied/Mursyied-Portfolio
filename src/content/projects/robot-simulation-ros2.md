@@ -1,7 +1,7 @@
 ---
 title: "Humanoid robot simulation in RViz and Gazebo"
 date: "2024"
-summary: "Designed a humanoid robot in Fusion 360, exported it as URDF and simulated acrobatic movements with ROS 2, Gazebo and RViz on Linux."
+summary: "Designed a human-shaped robot on the computer and made it do flips in a simulation, without building any hardware."
 tags: ["ROS 2", "Robotics", "Simulation"]
 images:
   - "images/projects/robot-simulation-ros2-1.jpg"
@@ -10,10 +10,11 @@ images:
   - "images/projects/robot-simulation-ros2-4.jpg"
 ---
 
-## Overview
+Flips can break a real robot, so I tried them on a computer first.
 
-- Designed a **humanoid robot** in **Fusion 360** and exported it as a **URDF**.
-- Ran it with **ROS 2** on Linux, with **Gazebo** physics and **RViz** visualisation.
-- Simulated **acrobatic movements**.
+## What I did
 
-**Tools:** Fusion 360, URDF, ROS 2, Gazebo, RViz
+- **Designed a human-shaped robot** in 3D design software.
+- **Loaded it into a robot simulator** with real physics and made it do **acrobatic moves**.
+
+**Stack:** Fusion 360, URDF, ROS 2, Gazebo, RViz

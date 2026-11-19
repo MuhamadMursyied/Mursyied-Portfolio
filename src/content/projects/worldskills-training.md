@@ -1,6 +1,7 @@
 ---
 title: "Mechatronics WorldSkills training"
-summary: "WorldSkills mechatronics training on a FESTO station with a Panasonic PLC."
+date: "2022"
+summary: "Training for the WorldSkills competition: programming a small automated production station with an industrial controller."
 tags: ["Training", "PLC", "Automation"]
 images:
   - "images/projects/worldskills-training-1.jpg"
@@ -8,7 +9,4 @@ images:
   - "images/projects/worldskills-training-3.jpg"
 ---
 
-## Overview
-
-- Mechatronics training for **WorldSkills**.
-- Worked on a **FESTO** station programmed with a **Panasonic PLC** (FPWIN Pro 7).
+Training for the **WorldSkills** mechatronics competition: programming a small automated production station (**FESTO**) with a **Panasonic PLC**.

@@ -25,8 +25,8 @@ npm run dev        # http://localhost:4321/Mursyied-Portfolio
 
 | What | File |
 | --- | --- |
-| Name, headline, intro, experience, studies, certifications, skills, roadmap | `src/data/profile.ts` |
-| Projects (one Markdown file each) | `src/content/projects/*.md` |
+| Name, headline, intro, experience (with links to its projects), "currently working on", studies, skills, roadmap | `src/data/profile.ts` |
+| Projects, and trainings tagged "Training" (one Markdown file each) | `src/content/projects/*.md` |
 | Images | `public/images/` |
 | Colours and the glass look | `src/styles/global.css` (variables at the top) |
 | Animations and interactions | `src/scripts/ui.ts` |

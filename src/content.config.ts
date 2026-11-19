@@ -12,6 +12,7 @@ const projects = defineCollection({
     tags: z.array(z.string()).default([]),
     links: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
     images: z.array(z.string()).default([]), // paths inside public/, first one is the cover
+    video: z.string().optional(), // path inside public/ to a short muted MP4, shown above the gallery
     featured: z.boolean().default(false), // featured projects are listed first
     draft: z.boolean().default(false), // drafts are not published
   }),

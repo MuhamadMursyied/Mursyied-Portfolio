@@ -1,7 +1,8 @@
 ---
 title: "autonomous fertiliser spreading"
+date: "2025"
 org: "SD Guthrie"
-summary: "An autonomous UGV for large-scale fertiliser spreading, coordinated with a remote control room and a LoRa-controlled refill bin."
+summary: "A driverless vehicle that spreads fertiliser on palm estates. I tested its long-range radio, drove it in field trials and made its refill bin open remotely."
 tags: ["Robotics", "IoT", "Embedded", "LoRa"]
 featured: true
 images:
@@ -14,19 +15,12 @@ images:
   - "images/projects/fertiliser-spreader-7.jpg"
 ---
 
-## Overview
+Spreading fertiliser across a palm estate by hand is slow. The goal is a **driverless vehicle** that covers large areas by itself, watched from a **control room**, with a **refill bin** in the field.
 
-The goal is an **autonomous UGV for large-scale fertiliser spreading**. The system coordinates the **UGV**, a **remote control room** and the **refill bin**.
+## What I did
 
-## Communications
+- **Tested how far the radio link reaches** between the vehicle and the control room, and helped make the signal more stable.
+- **Drove the vehicle** remotely during testing and field trials.
+- Made the **refill bin open and close remotely** from the control room, using a long-range, low-power radio (LoRa).
 
-- Did **range testing** for a **TVWS** transportable communication system.
-- Worked on **improving signal stability** and **tested new communication systems**.
-- **Piloted the UGV** during testing and field deployment.
-
-## refill bin IoT
-
-- Developed a **LoRa-based IoT control** for the refill bin open and close mechanism.
-- Made the refill bin **remotely controllable from the control room**.
-
-**Tools:** Arduino control system, control room, UGV field testing and piloting
+**Stack:** Arduino, LoRa, TVWS radio, field testing

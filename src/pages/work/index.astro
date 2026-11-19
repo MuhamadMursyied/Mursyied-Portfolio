@@ -5,7 +5,9 @@ import ProjectCard from "../../components/ProjectCard.astro";
 import { person } from "../../data/profile";
 import { sortProjects } from "../../utils";
 
-const projects = sortProjects(await getCollection("projects", (p) => !p.data.draft));
+const all = sortProjects(await getCollection("projects", (p) => !p.data.draft));
+const projects = all.filter((p) => !p.data.tags.includes("Training"));
+const training = all.filter((p) => p.data.tags.includes("Training"));
 
 // Tags used by more than one project become filter buttons, most used first.
 const counts = new Map<string, number>();
@@ -18,13 +20,21 @@ const tags = [...counts.entries()].filter(([, n]) => n > 1).sort((a, b) => b[1] 
     <div class="section-head reveal">
       <span class="label">Projects</span>
       <h1 class="gradient-text">Things I have built</h1>
-      <p>Autonomous robots, embedded systems and IoT, from field robots to university builds, plus the trainings and workshops I joined or ran. Pick a tag to filter.</p>
+      <p>Field robots first, then university projects. Pick a tag to filter.</p>
     </div>
     <div class="filters reveal" data-filter role="group" aria-label="Filter projects by tag">
       {["All", ...tags].map((t, i) => <button type="button" class="chip" data-tag={t} aria-pressed={i === 0 ? "true" : "false"}>{t}</button>)}
     </div>
     <ul class="grid">
       {projects.map((p, i) => <ProjectCard project={p} index={i} />)}
+    </ul>
+
+    <div class="section-head reveal training-head" id="training">
+      <span class="label">Training & leadership</span>
+      <h2>Certificates, courses and workshops I ran</h2>
+    </div>
+    <ul class="grid">
+      {training.map((p, i) => <ProjectCard project={p} index={projects.length + i} />)}
     </ul>
   </section>
 </Base>
@@ -35,5 +45,6 @@ const tags = [...counts.entries()].filter(([, n]) => n > 1).sort((a, b) => b[1] 
   .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
   .filters .chip { cursor: pointer; color: var(--muted); font: 500 0.88rem var(--font-body); }
   .filters .chip[aria-pressed="true"] { color: var(--on-accent); background: linear-gradient(110deg, var(--cyan), var(--violet)); border-color: transparent; box-shadow: 0 0 24px rgb(var(--cyan-rgb) / 0.3); }
+  .training-head { margin-top: 70px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; padding: 0; margin: 0; }
 </style>
