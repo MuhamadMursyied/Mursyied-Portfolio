@@ -2,7 +2,7 @@
 title: "Vibration condition monitoring for fault detection (final year thesis)"
 date: "2025"
 org: "UMPSA × MIMOS"
-summary: "Final year thesis with MIMOS: detects mass unbalance, shaft misalignment and bearing contamination with LabVIEW and NI-DAQ, monitored remotely on ThingsBoard."
+summary: "My final-year project with MIMOS: listening to a machine's vibration to spot faults early, and sending an alert online before it breaks."
 tags: ["IoT", "LabVIEW", "Condition monitoring"]
 images:
   - "images/projects/vibration-monitoring-iot-2.jpg"
@@ -10,19 +10,12 @@ images:
   - "images/projects/vibration-monitoring-iot-3.jpg"
 ---
 
-## Overview
+A machine usually shakes differently before it breaks. My final-year project, **with MIMOS**, reads that vibration to **catch faults early**.
 
-My final year thesis, done **in collaboration with MIMOS**. The system watches machine vibration to catch faults early.
+## What I did
 
-## What it detects
+- Spots three common faults: **an unbalanced part**, **a shaft out of line** and **a dirty bearing**.
+- Measures vibration with sensors and a data-capture box, and analyses it in **LabVIEW**.
+- Sends readings to an **online dashboard** that shows the machine's state and raises alerts.
 
-- **Mass unbalance**
-- **Shaft misalignment**
-- **Bearing contamination**
-
-## How it works
-
-- Built in **LabVIEW** with **NI-DAQ** for data acquisition.
-- Integrated with the **ThingsBoard** IoT platform for **remote monitoring and alerts**.
-
-**Tools:** LabVIEW, NI-DAQ, ThingsBoard
+**Stack:** LabVIEW, NI-DAQ, ThingsBoard

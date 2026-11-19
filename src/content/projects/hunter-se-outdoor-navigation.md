@@ -1,9 +1,11 @@
 ---
-title: "Autonomous outdoor navigation for the Hunter SE"
+title: "Autonomous navigation for the Hunter SE"
+date: "2026"
 org: "MIMOS Berhad"
-summary: "Robotic Software Engineer (AGV navigation) on the Hunter SE: localization, navigation, simulation testing, sensor drivers and root-cause debugging, from Gazebo to the field."
-tags: ["ROS 2", "Nav2", "Sensor fusion", "GNSS", "Robotics"]
+summary: "I make a robot drive itself outdoors. I fixed two things: it now knows exactly where it is, and it drives its route smoothly."
+tags: ["ROS 2", "Nav2", "MPPI", "GNSS", "Robotics"]
 featured: true
+video: "videos/hunter-se-outdoor-navigation.mp4"
 images:
   - "images/projects/hunter-se-outdoor-navigation-1.jpg"
   - "images/projects/hunter-se-outdoor-navigation-2.jpg"
@@ -13,18 +15,18 @@ images:
   - "images/projects/hunter-se-outdoor-navigation-6.jpg"
   - "images/projects/hunter-se-outdoor-navigation-7.jpg"
   - "images/projects/hunter-se-outdoor-navigation-8.jpg"
+  - "images/projects/hunter-se-outdoor-navigation-9.jpg"
+  - "images/projects/hunter-se-outdoor-navigation-10.jpg"
 ---
 
-## Overview
+The **Hunter SE** is a robot car that drives itself outdoors. I look after its navigation software: the part that works out where the robot is and how it gets to the next point. I try every change in a computer simulation first, then on the real robot in the field.
 
-At MIMOS Berhad I work as a **Robotic Software Engineer (AGV navigation)** on the **Hunter SE** robot so it can operate autonomously outdoors.
+## Problem 1: the robot got lost
 
-## What I do
+Normal GPS jumps around by a few metres, so the robot slowly drifted off its path. I switched it to a much more accurate GPS that also uses a camera and motion sensors to keep track of position.
 
-- **Localization:** make the robot know where it is by combining **GPS, IMU and wheel data** with an **EKF**.
-- **Navigation:** plan a path and drive there safely with **Nav2**.
-- **Simulation first:** test every change in **Gazebo** before it goes on the real robot.
-- **Sensor drivers:** hook up new hardware when it shows up.
-- **Debugging:** find the real cause of a problem, not just patch it.
+## Problem 2: the driving was jerky
 
-**Stack:** ROS 2, Nav2, EKF, GNSS, Gazebo, NVIDIA Jetson
+The robot steers like a car, and on rough ground it kept stopping and wobbling. I replaced the path-following software with a smoother one, so it now drives along the route steadily.
+
+**Stack:** ROS 2 Jazzy, Nav2, MPPI controller, robot_localization, Fixposition RTK-GNSS, Gazebo, NVIDIA Jetson AGX Orin

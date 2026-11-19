@@ -23,14 +23,21 @@ export function bold(text: string): string {
   return escaped.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 }
 
-/** Featured projects on top, trainings at the end, newest first in between (undated = current work). */
-export function sortProjects<T extends { data: { date?: string; featured: boolean; tags: string[] } }>(list: T[]): T[] {
+// Where the work was done, newest job first; anything else (university projects) comes after.
+const orgRank = ["MIMOS Berhad", "SD Guthrie", "Self learning"];
+
+/** Newest job first (MIMOS, SD Guthrie, self learning, then the rest), trainings last, newest first within each. */
+export function sortProjects<T extends { data: { date?: string; org?: string; tags: string[] } }>(list: T[]): T[] {
   const isTraining = (p: T) => Number(p.data.tags.includes("Training"));
+  const rank = (p: T) => {
+    const i = orgRank.indexOf(p.data.org ?? "");
+    return i === -1 ? orgRank.length : i;
+  };
   return [...list].sort(
     (a, b) =>
-      Number(b.data.featured) - Number(a.data.featured) ||
       isTraining(a) - isTraining(b) ||
-      (b.data.date ?? "9999").localeCompare(a.data.date ?? "9999"),
+      rank(a) - rank(b) ||
+      (b.data.date ?? "0").localeCompare(a.data.date ?? "0"),
   );
 }
 

@@ -1,7 +1,8 @@
 ---
 title: "Husky development UGV"
+date: "2025"
 org: "SD Guthrie"
-summary: "Hardware integration on a Husky development UGV: new sensors and accessories, mechanical modifications, 3D-printed parts and camera setup for teleoperation."
+summary: "Fitted new sensors and cameras onto a test robot: designed and 3D-printed the mounts, changed the frame and set the cameras up so it can be driven remotely."
 tags: ["Robotics", "Mechanical design", "ROS 2"]
 featured: true
 images:
@@ -10,16 +11,13 @@ images:
   - "images/projects/husky-ugv-3.jpg"
 ---
 
-## Overview
-
-At SD Guthrie I supported development on a **Husky** UGV used as a development platform.
+The **Husky** is a small test robot. It kept getting new sensors, and each one needed a place to sit.
 
 ## What I did
 
-- Supported **new hardware installation and integration**.
-- Made **mechanical modifications** and **3D-printed parts**.
-- Designed and fabricated mounting parts for **sensors and accessories**.
-- Set up **camera positioning and guidelines for teleoperation**.
-- Ran **hardware testing and validation**.
+- **Installed new hardware** and changed the frame where needed.
+- **Designed and 3D-printed mounts** for sensors and accessories.
+- **Placed the cameras** and wrote guidelines so an operator can drive it remotely by video.
+- **Tested** everything after fitting.
 
-**Tools:** Creality 3D printer, SolidWorks, Fusion 360, ROS 2, Python
+**Stack:** SolidWorks, Fusion 360, 3D printing, ROS 2, Python

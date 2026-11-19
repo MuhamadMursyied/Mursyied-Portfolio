@@ -1,8 +1,11 @@
 ---
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
-import { certifications, competencies, experience, intro, person, skills, socials, studies } from "../data/profile";
+import { getCollection } from "astro:content";
+import { currently, experience, intro, person, socials, studies } from "../data/profile";
 import { bold, url } from "../utils";
+
+const titles = new Map((await getCollection("projects")).map((p) => [p.id, p.data.title]));
 ---
 
 <Base title={`About · ${person.name}`} description={`Experience, studies and skills of ${person.name}, ${person.role}.`}>
@@ -24,8 +27,8 @@ import { bold, url } from "../utils";
         <a href="#intro">Introduction</a>
         <a href="#experience">Experience</a>
         <a href="#studies">Studies</a>
-        <a href="#certifications">Certifications</a>
-        <a href="#skills">Skills</a>
+        <a href={url("skills/")}>Skills</a>
+        <a href={url("work/#training")}>Training</a>
         <a href="#contact">Contact</a>
       </nav>
     </aside>
@@ -41,7 +44,6 @@ import { bold, url } from "../utils";
             <figcaption>Out in the field</figcaption>
           </figure>
         </div>
-        <ul class="chips competencies">{competencies.map((c) => <li class="chip">{c}</li>)}</ul>
       </section>
 
       <section id="experience">
@@ -55,11 +57,23 @@ import { bold, url } from "../utils";
                 <span class="mono when">{job.period}</span>
               </div>
               <p class="job-role">{job.role} · <span class="muted">{job.place}</span></p>
-              <ul>{job.points.map((pt) => <li>{pt}</li>)}</ul>
-              {job.tags.length > 0 && <ul class="tags job-tags">{job.tags.map((t) => <li>{t}</li>)}</ul>}
+              <p>{job.summary}</p>
+              <ul class="job-projects">
+                {job.projects.map((id) => (
+                  <li><a href={url(`work/${id}/`)}>{titles.get(id)} <Icon name="arrow" size={14} /></a></li>
+                ))}
+              </ul>
             </li>
           ))}
         </ol>
+      </section>
+
+      <section id="now" class="reveal">
+        <span class="label">Now</span>
+        <h2>Currently working on</h2>
+        <article class="glass spot card">
+          <ul>{currently.map((c) => <li>{c}</li>)}</ul>
+        </article>
       </section>
 
       <section id="studies">
@@ -71,35 +85,6 @@ import { bold, url } from "../utils";
               <div class="job-head"><h3>{s.school}</h3><span class="mono when">{s.period}</span></div>
               <p class="job-role">{s.qualification}</p>
               {s.notes.length > 0 && <ul>{s.notes.map((n) => <li>{n}</li>)}</ul>}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="certifications">
-        <span class="label reveal">Certifications</span>
-        <h2 class="reveal">Training & certificates</h2>
-        <ul class="certs">
-          {certifications.map((c) => (
-            <li class="glass spot reveal">
-              <span class="cert-icon"><Icon name="cert" size={20} /></span>
-              <div>
-                <p class="cert-name">{c.name}</p>
-                {(c.issuer || c.year) && <p class="muted small">{[c.issuer, c.year].filter(Boolean).join(" · ")}</p>}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section id="skills">
-        <span class="label reveal">Skills</span>
-        <h2 class="reveal">Technical skills</h2>
-        <div class="stack">
-          {skills.map((g) => (
-            <article class="glass spot card reveal">
-              <h3>{g.group}</h3>
-              <ul class="chips">{g.items.map((s) => <li class="chip"><Icon name={s.icon} size={16} />{s.name}</li>)}</ul>
             </article>
           ))}
         </div>
@@ -160,15 +145,11 @@ import { bold, url } from "../utils";
   .stack { display: grid; gap: 16px; }
   .card h3 { font-size: 1.1rem; margin-bottom: 12px; }
   .card .job-head h3 { margin: 0; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0 !important; }
-  .chips .chip { font-size: 0.85rem; color: var(--text); margin: 0; }
 
-  .competencies { margin-top: 8px; }
-  .job-tags { margin-top: 14px; padding: 0 !important; }
-  .job .job-tags li { margin: 0; }
-  .certs { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-  .certs li { display: flex; gap: 14px; align-items: flex-start; padding: 18px; border-radius: var(--radius-sm); }
-  .cert-icon { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; color: var(--accent); background: rgb(var(--cyan-rgb) / 0.08); border: 1px solid rgb(var(--cyan-rgb) / 0.25); }
+  .job .job-projects { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .job-projects a { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--clay-sunk); color: var(--accent); font-weight: 600; font-size: 0.9rem; text-decoration: none; }
+  .job-projects a:hover { box-shadow: var(--glow); }
+  .job .job-projects li { margin: 0; }
   .cert-name { margin: 0; font-weight: 500; }
   .small { font-size: 0.85rem; margin: 4px 0 0; }
 

@@ -1,13 +1,11 @@
 ---
 title: "Facilitator: Back to Basic Robotic Workshop"
+date: "2022"
 org: "IEM UMPSS × UMPBOT"
-summary: "Facilitated a back-to-basics robotics workshop for about 20 students."
+summary: "Helped about 20 students build their first robots."
 tags: ["Training", "Robotics", "Leadership"]
 images:
   - "images/projects/umpbot-robotics-workshop-1.jpg"
 ---
 
-## Overview
-
-- **Facilitator** at the **IEM UMPSS × UMPBOT Back to Basic Robotic Workshop**.
-- Helped about **20 students** with their first robotics steps.
+Facilitator at the **IEM UMPSS × UMPBOT Back to Basic Robotic Workshop**, helping about **20 students** take their first steps in robotics.

@@ -1,7 +1,8 @@
 ---
 title: "ROC & Autobin: autonomous fertiliser spreading"
+date: "2025"
 org: "SD Guthrie"
-summary: "An autonomous UGV for large-scale fertiliser spreading (target 100 hectares a week), coordinated with a Remote Operating Center and a LoRa-controlled Autobin."
+summary: "A driverless vehicle that spreads fertiliser on palm estates, aiming for 100 hectares a week. I tested its long-range radio, drove it in field trials and made its refill bin open remotely."
 tags: ["Robotics", "IoT", "Embedded", "LoRa"]
 featured: true
 images:
@@ -14,19 +15,12 @@ images:
   - "images/projects/roc-autobin-7.jpg"
 ---
 
-## Overview
+Spreading fertiliser across a palm estate by hand is slow. The goal is a **driverless vehicle** that covers **100 hectares a week**, watched from a **control room (the ROC)**, with a **refill bin (the Autobin)** in the field.
 
-The goal is an **autonomous UGV for large-scale fertiliser spreading**, with a target of **100 hectares per week**. The system coordinates the **UGV**, a **Remote Operating Center (ROC)** and the **Autobin**.
+## What I did
 
-## Communications
+- **Tested how far the radio link reaches** between the vehicle and the control room, and helped make the signal more stable.
+- **Drove the vehicle** remotely during testing and field trials.
+- Made the **Autobin open and close remotely** from the control room, using a long-range, low-power radio (LoRa).
 
-- Did **range testing** for a **TVWS** transportable communication system.
-- Worked on **improving signal stability** and **tested new communication systems**.
-- **Piloted the UGV** during testing and field deployment.
-
-## Autobin IoT
-
-- Developed a **LoRa-based IoT control** for the Autobin open and close mechanism.
-- Made the Autobin **remotely controllable from the ROC**.
-
-**Tools:** Arduino control system, ROC, UGV field testing and piloting
+**Stack:** Arduino, LoRa, TVWS radio, field testing

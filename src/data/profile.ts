@@ -3,16 +3,16 @@
 export const person = {
   name: "Muhamad Mursyied",
   firstName: "Mursyied",
-  role: "Robotics Engineer",
-  headline: "I design, wire and program robots",
+  role: "Robotics Software Engineer",
+  headline: "I make outdoor ground robots drive themselves",
   subline:
-    "I'm Mursyied, a mechatronic engineer into robotics, automation, IoT and smart systems. I can take a machine from idea to field: design the parts, wire the electronics and write the code that makes it move.",
-  status: "Mechatronic engineer · robotics, automation, IoT",
+    "On farms and open land, where GPS is off by metres, grass looks like a wall and the ground is never flat. I write the software that tells the robot where it is, what's in its way and where to go next, and I test it in the field.",
+  status: "Robotics software engineer · ROS 2 navigation for UGVs",
   location: "Rawang, Selangor, Malaysia",
   timeZone: "Asia/Kuala_Lumpur",
   email: "muhamadmursyied@gmail.com",
   avatar: "images/avatar.webp",
-  languages: ["English (advanced)", "Bahasa Malaysia (native)", "German (intermediate)"],
+  languages: ["English (advanced)", "Bahasa Malaysia (native)", "German (Goethe B1)"],
 };
 
 export const socials = [
@@ -22,22 +22,8 @@ export const socials = [
 
 // Paragraphs for the About page. **bold** is supported.
 export const intro = [
-  "I'm a mechatronic engineer who loves building machines that move and think. I'm most interested in **robotics**, **automation**, **IoT and smart systems**, and **mechanical design**.",
-  "I can work on the whole machine. I **design** parts in CAD and 3D-print them, I **wire** the electronics, sensors, controllers and communication modules, and I **program** it all, from Arduino, FPGA and PLC to ROS 2 navigation on Linux. I test in simulation first, then in the field, and I like finding the real cause of a problem instead of patching it.",
-  "Outside work I keep learning: training **YOLOv11** to count palm crowns and getting a **Livox Mid-360 LiDAR** running on ROS 2 for localization and sensor fusion.",
-  "I graduated in Mechatronic Engineering with Honours from **Universiti Malaysia Pahang Al-Sultan Abdullah (UMPSA)**, in a collaboration programme with Hochschule Karlsruhe (HKA), Germany.",
-];
-
-// Shown as chips on the About page.
-export const competencies = [
-  "Mechanical design and 3D printing",
-  "Electrical wiring",
-  "Programming",
-  "Robotics and autonomous navigation",
-  "Automation and PLC",
-  "IoT and smart systems",
-  "Field testing",
-  "Problem solving",
+  "I trained as a **mechatronic engineer**, so I can work on the whole machine: **design** parts in CAD and 3D-print them, **wire** the electronics and **program** it, from Arduino and PLC to ROS 2 on Linux.",
+  "Today I write navigation software for outdoor robots at **MIMOS**. I test in simulation first, then in the field, and I like finding the real cause of a problem instead of patching it.",
 ];
 
 // Where I'm heading: shown on the home page.
@@ -51,39 +37,34 @@ export const experience = [
   {
     company: "MIMOS Berhad",
     role: "Robotics Software Engineer",
-    place: "Kuala Lumpur",
-    period: "Present",
+    place: "Robotics & Autonomous System · Kuala Lumpur",
+    period: "Apr 2026 – Present",
     current: true,
-    points: [
-      "Enabled autonomous outdoor operation of the Hunter SE robot: managed its navigation system and fused GPS, motion sensors and wheel data for accurate positioning, taking each change from simulation to field deployment.",
-      "Bring up sensor drivers when new hardware arrives, and debug problems down to the real cause instead of patching them.",
-      "Automated end-to-end robot missions: software that runs a 58-point field coverage route from a single command, plus a tablet control app for operators to monitor, drive and manage missions.",
-    ],
-    tags: ["ROS 2", "Nav2", "EKF", "GNSS", "Gazebo", "NVIDIA Jetson", "FastAPI", "React"],
+    summary: "I look after the navigation software of a self-driving outdoor robot: where it is, what's in its way and how it runs a full mission.",
+    projects: ["hunter-se-outdoor-navigation", "vegetation-aware-perception", "tablet-ground-control"],
   },
   {
     company: "SD Guthrie",
-    role: "Robotics Engineer",
+    role: "Robotics Engineer, Group Digital – Robotics",
     place: "Carey Island, Selangor",
-    period: "From Jul 2025",
-    points: [
-      "Husky development UGV: installed and integrated new hardware, made mechanical modifications and 3D-printed mounts for sensors and accessories, and set up cameras for teleoperation.",
-      "ROC & Autobin: autonomous UGV for fertiliser spreading (target 100 hectares a week). Range-tested a TVWS comms system, improved signal stability, piloted the UGV in the field and built LoRa control for the Autobin from the Remote Operating Center.",
-      "Timmy: redesigning a UGV with an integrated PCB into a modular platform for easy hardware swaps, learning and testing.",
-    ],
-    tags: ["UGV", "Husky", "LoRa", "TVWS", "3D printing", "Field testing"],
+    period: "Jul 2025 – Apr 2026",
+    summary: "Fitted sensors, tested radio links and drove field trials for robots that work on palm estates.",
+    projects: ["roc-autobin", "husky-ugv"],
   },
   {
     company: "DreamEDGE",
     role: "Intern, Electrical & System Department",
     place: "Cyberjaya, Selangor",
     period: "Aug 2023 – Feb 2024",
-    points: [
-      "Designed electronic components to meet project specifications.",
-      "Coordinated with clients on project progress and reporting.",
-    ],
-    tags: ["Electronics design"],
+    summary: "Designed electronic components to project specifications and reported progress to clients.",
+    projects: ["catia-certification"],
   },
+];
+
+// "Currently working on" on the About page.
+export const currently = [
+  "A proposal for a robot that carries harvested palm fruit over soft peat ground, reusing my navigation and follow-me work.",
+  "Learning how the robot's navigation software works inside, starting with the part that steers it along a route.",
 ];
 
 export const studies = [
@@ -94,8 +75,6 @@ export const studies = [
     notes: [
       "CGPA 3.44",
       "Collaboration programme with Hochschule Karlsruhe (HKA), Germany",
-      "Facilitator, IEM UMPSS × UMPBOT Back to Basic Robotics Workshop (2022)",
-      "Facilitator, IEM Club Engineering Treasure Hunt (about 150 participants)",
     ],
   },
   {
@@ -106,14 +85,6 @@ export const studies = [
   },
 ];
 
-export const certifications = [
-  { name: "Goethe-Zertifikat B1 (German)", issuer: "Goethe-Institut" },
-  { name: "CATIA V5 Specialist – Mechanical Designer" },
-  { name: "PLC programming (LD, ST, FBD) with IndraWorks Engineering", issuer: "Bosch Rexroth", year: "2024" },
-  { name: "Visual Components workshop: machine layout and productivity analysis", year: "2022" },
-  { name: "Mechatronics WorldSkills training: automated system on a FESTO station", year: "2022" },
-];
-
 // icon: a simple-icons slug (see src/components/Icon.astro) or one of the built-in names.
 export const skills = [
   {
@@ -121,6 +92,7 @@ export const skills = [
     items: [
       { name: "ROS 2 (Jazzy)", icon: "ros" },
       { name: "Nav2", icon: "route" },
+      { name: "MPPI controller", icon: "route" },
       { name: "Sensor fusion (EKF)", icon: "fusion" },
       { name: "GNSS navigation", icon: "satellite" },
       { name: "SLAM", icon: "radar" },
@@ -128,6 +100,10 @@ export const skills = [
       { name: "RViz", icon: "eye" },
       { name: "URDF", icon: "ugv" },
       { name: "YOLOv11", icon: "ultralytics" },
+      { name: "DeepLabV3", icon: "eye" },
+      { name: "PCL", icon: "radar" },
+      { name: "OpenCV", icon: "opencv" },
+      { name: "ONNX", icon: "onnx" },
       { name: "Roboflow", icon: "roboflow" },
     ],
   },
@@ -135,6 +111,10 @@ export const skills = [
     group: "Hardware",
     items: [
       { name: "Livox Mid-360 LiDAR", icon: "radar" },
+      { name: "Ouster OS0-64 LiDAR", icon: "radar" },
+      { name: "RoboSense E1 LiDAR", icon: "radar" },
+      { name: "OAK camera", icon: "camera" },
+      { name: "Fixposition RTK-GNSS", icon: "satellite" },
       { name: "Arduino", icon: "arduino" },
       { name: "LoRa", icon: "iot" },
       { name: "TVWS comms", icon: "satellite" },
@@ -161,6 +141,7 @@ export const skills = [
   {
     group: "Web & tools",
     items: [
+      { name: "Flask", icon: "flask" },
       { name: "FastAPI", icon: "fastapi" },
       { name: "React", icon: "react" },
       { name: "WebSocket", icon: "socketdotio" },
