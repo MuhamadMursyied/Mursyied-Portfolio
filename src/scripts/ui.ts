@@ -173,8 +173,17 @@ function gallery() {
   root.querySelector(".gallery-next")?.addEventListener("click", () => show(index + 1));
 }
 
+// Project videos: pages swapped in by the router don't honour autoplay/muted, so start them here.
+function videos() {
+  document.querySelectorAll<HTMLVideoElement>("video[data-autoplay]").forEach((v) => {
+    v.muted = true;
+    v.playsInline = true;
+    v.play().catch(() => {}); // blocked: the poster and controls stay, one tap plays it
+  });
+}
+
 document.addEventListener("astro:page-load", () => {
-  [reveal, clock, pointer, counters, typer, themeToggle, projectFilter, gallery, world].forEach((fn) => fn());
+  [reveal, clock, pointer, counters, typer, themeToggle, projectFilter, gallery, world, videos].forEach((fn) => fn());
 });
 document.addEventListener("astro:before-swap", () => {
   cleanups.forEach((fn) => fn());
