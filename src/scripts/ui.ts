@@ -178,6 +178,7 @@ function videos() {
   document.querySelectorAll<HTMLVideoElement>("video[data-autoplay]").forEach((v) => {
     v.muted = true;
     v.playsInline = true;
+    v.load(); // after a router swap the element can stall on its first source; reload it
     v.play().catch(() => {}); // blocked: the poster and controls stay, one tap plays it
   });
 }
