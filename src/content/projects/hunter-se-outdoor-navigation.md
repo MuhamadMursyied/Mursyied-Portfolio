@@ -5,6 +5,9 @@ org: "MIMOS Berhad"
 summary: "I make a robot drive itself outdoors. I fixed two things: it now knows exactly where it is, and it drives its route smoothly."
 tags: ["ROS 2", "Nav2", "MPPI", "GNSS", "Robotics"]
 featured: true
+videos:
+  - src: "videos/hunter-se-outdoor-navigation-real.mp4"
+    caption: "Real robot field test · Nav2 + RTK-GNSS · edited for length"
 video: "videos/hunter-se-outdoor-navigation.mp4"
 images:
   - "images/projects/hunter-se-outdoor-navigation-1.jpg"
@@ -19,7 +22,7 @@ images:
   - "images/projects/hunter-se-outdoor-navigation-10.jpg"
 ---
 
-The **Hunter SE** is a robot car that drives itself outdoors. I look after its navigation software: the part that works out where the robot is and how it gets to the next point. I try every change in a computer simulation first, then on the real robot in the field.
+The **Hunter SE** is a robot car that drives itself outdoors. I look after its navigation software: the part that works out where the robot is and how it gets to the next point. I try every change in a computer simulation first, then on the real robot in the field. The first video below is the real robot; the second is the simulation.
 
 ## Problem 1: the robot got lost
 

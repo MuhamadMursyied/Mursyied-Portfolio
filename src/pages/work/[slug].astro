@@ -13,7 +13,8 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-const { title, summary, tags, links, images, video } = project.data;
+const { title, summary, tags, links, images, video, videos } = project.data;
+const clips = [...videos, ...(video ? [{ src: video, caption: "Simulation recording · edited for length" }] : [])];
 
 const others = sortProjects(await getCollection("projects", (p) => !p.data.draft && p.id !== project.id));
 // Related: projects that share a tag, then the newest others.
@@ -40,15 +41,15 @@ const related = [
       )}
     </header>
 
-    {video && (
+    {clips.map((clip) => (
       <figure class="video glass hud reveal">
-        <video poster={url(video.replace(/\.mp4$/, ".jpg"))} autoplay muted loop playsinline controls preload="auto" data-autoplay>
-          <source src={url(video.replace(/\.mp4$/, ".webm"))} type="video/webm" />
-          <source src={url(video)} type="video/mp4" />
+        <video poster={url(clip.src.replace(/\.mp4$/, ".jpg"))} autoplay muted loop playsinline controls preload="auto" data-autoplay>
+          <source src={url(clip.src.replace(/\.mp4$/, ".webm"))} type="video/webm" />
+          <source src={url(clip.src)} type="video/mp4" />
         </video>
-        <figcaption class="mono">Simulation recording · edited for length</figcaption>
+        <figcaption class="mono">{clip.caption}</figcaption>
       </figure>
-    )}
+    ))}
 
     {images.length > 0 && (
       <div class="gallery glass hud reveal" data-gallery>
