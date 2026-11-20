@@ -22,7 +22,7 @@ export const socials = [
 
 // Paragraphs for the About page. **bold** is supported.
 export const intro = [
-  "I trained as a **mechatronic engineer**, so I can work on the whole machine: **design** parts in CAD and 3D-print them, **wire** the electronics and **program** it, from Arduino and PLC to ROS 2 on Linux.",
+  "I trained as a **mechatronic engineer**, and my core is **robotics software**: **ROS 2 navigation**, **computer vision**, **IoT** and **AI**, from simulation to the real robot. I can also design parts in CAD, 3D-print them and wire the electronics.",
   "Today I write navigation software for outdoor robots at **MIMOS**. I test in simulation first, then in the field, and I like finding the real cause of a problem instead of patching it.",
 ];
 
@@ -168,8 +168,6 @@ export const skills = [
       { name: "Quartus Prime", icon: "intel" },
       { name: "Fritzing", icon: "chip" },
       { name: "Visual Components", icon: "factory" },
-      { name: "IndraWorks (ctrlX)", icon: "plc" },
-      { name: "FPWIN Pro 7", icon: "plc" },
     ],
   },
 ];
