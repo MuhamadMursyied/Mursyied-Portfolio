@@ -1,7 +1,7 @@
 // All the page interactions. Astro swaps pages without a full reload (view transitions),
 // so everything is set up again on every "astro:page-load" and torn down before the swap.
 
-import { initWorld } from "./world";
+import { initJourney, initWorld } from "./world";
 
 type Cleanup = () => void;
 let cleanups: Cleanup[] = [];
@@ -154,6 +154,11 @@ function world() {
   if (stop) cleanups.push(stop);
 }
 
+function journeyPage() {
+  const stop = initJourney();
+  if (stop) cleanups.push(stop);
+}
+
 // Image gallery on a project page.
 function gallery() {
   const root = document.querySelector<HTMLElement>("[data-gallery]");
@@ -184,7 +189,7 @@ function videos() {
 }
 
 document.addEventListener("astro:page-load", () => {
-  [reveal, clock, pointer, counters, typer, themeToggle, projectFilter, gallery, world, videos].forEach((fn) => fn());
+  [reveal, clock, pointer, counters, typer, themeToggle, projectFilter, gallery, world, journeyPage, videos].forEach((fn) => fn());
 });
 document.addEventListener("astro:before-swap", () => {
   cleanups.forEach((fn) => fn());

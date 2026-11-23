@@ -28,9 +28,9 @@ export const intro = [
 
 // Where I'm heading: shown on the home page.
 export const focus = [
-  { stage: "Now", title: "Unmanned Ground Vehicles", text: "Outdoor autonomy with ROS 2, Nav2, EKF sensor fusion and GNSS, from Gazebo to field deployment.", icon: "ugv" },
-  { stage: "Next", title: "Unmanned Aerial Vehicles", text: "Flight controller integration with PX4, ArduPilot and MAVROS, and aerial mapping.", icon: "drone" },
-  { stage: "Future", title: "Unmanned Surface Vehicles", text: "Marine autonomy, GNSS/RTK guidance and field robotics in harsh conditions.", icon: "boat" },
+  { stage: "Now", title: "Autonomous ground vehicles (UGV)", text: "Outdoor autonomy with ROS 2, Nav2, EKF sensor fusion and GNSS, from Gazebo to field deployment.", icon: "ugv" },
+  { stage: "Next", title: "AMRs and industrial automation", text: "The same navigation stack indoors: mobile robots that move material by themselves, next to robot arms on automated lines.", icon: "factory" },
+  { stage: "Future", title: "Autonomous cars and the robotics industry", text: "Localisation, perception and planning at road speed, and growing with the robotics industry from one robot to fleets and products.", icon: "route" },
 ];
 
 export const experience = [

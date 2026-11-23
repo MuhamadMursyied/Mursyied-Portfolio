@@ -59,6 +59,22 @@ export function initWorld(): (() => void) | undefined {
   return () => cleanups.forEach((fn) => fn());
 }
 
+// The Journey page: the same live sky and weather, with a scroll-driven trip through my career.
+export function initJourney(): (() => void) | undefined {
+  const host = document.querySelector<HTMLElement>("[data-journey]");
+  if (!host) return;
+  const stage = host.querySelector<HTMLElement>("[data-j-stage]");
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  loadWeather(host);
+  if (!stage || !webgl()) { host.classList.add("j3-off"); return; }
+  let stop: (() => void) | undefined;
+  let gone = false;
+  import("./journey3d")
+    .then(({ startJourney3D }) => { if (!gone) stop = startJourney3D(host, stage, { reducedMotion }); })
+    .catch((err) => { console.warn("3D journey unavailable", err); host.classList.add("j3-off"); });
+  return () => { gone = true; stop?.(); };
+}
+
 function webgl() {
   try {
     return !!document.createElement("canvas").getContext("webgl2");

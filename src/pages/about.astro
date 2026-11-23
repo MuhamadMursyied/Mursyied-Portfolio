@@ -1,161 +1,193 @@
 ---
+// About me, told as a trip down one road: scroll and the 3D camera flies from stop to stop
+// of my career (src/scripts/journey3d.ts). The cards hold the facts, so the page still reads without 3D.
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
 import { getCollection } from "astro:content";
-import { currently, experience, intro, person, socials, studies } from "../data/profile";
+import { journey } from "../data/journey";
+import { currently, intro, person, socials } from "../data/profile";
 import { bold, url } from "../utils";
 
-const titles = new Map((await getCollection("projects")).map((p) => [p.id, p.data.title]));
+const titles = new Map((await getCollection("projects", (p) => !p.data.draft)).map((p) => [p.id, p.data.title]));
 ---
 
-<Base title={`About · ${person.name}`} description={`Experience, studies and skills of ${person.name}, ${person.role}.`}>
-  <div class="page container">
-    <aside class="side">
-      <div class="profile glass hud reveal">
-        <img class="avatar" src={url(person.avatar)} alt={person.name} width="120" height="120" />
-        <h1>{person.name}</h1>
-        <p class="role mono">{person.role.toUpperCase()}</p>
-        <p class="loc"><Icon name="globe" size={15} /> {person.location}</p>
-        <ul class="langs">{person.languages.map((l) => <li class="chip">{l}</li>)}</ul>
-        <div class="links">
-          {socials.map((s) => (
-            <a class="btn" href={s.url} target={s.url.startsWith("http") ? "_blank" : undefined} rel="noopener"><Icon name={s.icon} size={16} />{s.label}</a>
-          ))}
-        </div>
+<Base title={`About · ${person.name}`} description={`About ${person.name}, ${person.role}: experience and studies, told as a 3D journey from a Kedah classroom to robots that drive themselves.`} footer={false} hud>
+  <section class="journey" data-journey>
+    <div class="j-stage" data-j-stage>
+      <p class="j-loading mono">Loading the journey…</p>
+      <div class="j-me" data-j-me aria-hidden="true">
+        <span class="in"><img src={url(person.avatar)} alt="" width="40" height="40" /></span>
       </div>
-      <nav class="toc reveal" aria-label="On this page">
-        <a href="#intro">Introduction</a>
-        <a href="#experience">Experience</a>
-        <a href="#studies">Studies</a>
-        <a href={url("skills/")}>Skills</a>
-        <a href={url("work/#training")}>Training</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </aside>
+    </div>
+    <div class="j-scrim" aria-hidden="true"></div>
 
-    <div class="content">
-      <section id="intro" class="reveal">
-        <span class="label">Introduction</span>
-        <h2 class="gradient-text big">Hi, I'm {person.firstName}.</h2>
-        <div class="intro-row">
-          <div>{intro.map((p) => <p class="lead" set:html={bold(p)} />)}</div>
-          <figure class="field glass">
-            <img src={url("images/field.jpg")} alt={`${person.firstName} out in the field`} width="726" height="968" loading="lazy" />
-            <figcaption>Out in the field</figcaption>
-          </figure>
+    <nav class="j-rail" aria-label="Journey stops">
+      <button type="button" class="j-dot" data-j-dot aria-label="About me"><span class="mono">Me</span></button>
+      {journey.map((s) => (
+        <button type="button" class="j-dot" data-j-dot aria-label={`${s.years}: ${s.title}`}><span class="mono">{s.years.split(" – ")[0]}</span></button>
+      ))}
+      <button type="button" class="j-dot" data-j-dot aria-label="Contact"><span class="mono">Contact</span></button>
+    </nav>
+
+    <p class="j-live glass mono" aria-live="polite">
+      <span class="live"></span><span data-hud-place>Rawang, Selangor</span>
+      <span class="sep">·</span><span data-w="temp">--°C</span>
+      <span class="sep">·</span><span data-w="cond">Live sky</span>
+    </p>
+
+    <div class="j-flow">
+      <header class="j-sec j-intro" data-j-sec id="intro">
+        <div class="j-card glass">
+          <div class="who">
+            <img class="avatar" src={url(person.avatar)} alt={person.name} width="84" height="84" />
+            <div>
+              <p class="kicker mono">About me <span>/ {person.role}</span></p>
+              <h1>Hi, I'm {person.firstName}.</h1>
+              <p class="place mono"><Icon name="globe" size={13} /> {person.location}</p>
+            </div>
+          </div>
+          {intro.map((p) => <p class="lead" set:html={bold(p)} />)}
+          <ul class="langs">{person.languages.map((l) => <li class="chip">{l}</li>)}</ul>
+          <div class="links">
+            {socials.map((so) => (
+              <a class="btn" href={so.url} target={so.url.startsWith("http") ? "_blank" : undefined} rel="noopener"><Icon name={so.icon} size={16} />{so.label}</a>
+            ))}
+          </div>
+          <p class="hint mono"><Icon name="arrow" size={14} /> Scroll through my journey</p>
         </div>
-      </section>
+      </header>
 
-      <section id="experience">
-        <span class="label reveal">Experience</span>
-        <h2 class="reveal">Where I have worked</h2>
-        <ol class="timeline">
-          {experience.map((job) => (
-            <li class:list={["job glass spot reveal", { current: job.current }]}>
-              <div class="job-head">
-                <h3>{job.company}</h3>
-                <span class="mono when">{job.period}</span>
-              </div>
-              <p class="job-role">{job.role} · <span class="muted">{job.place}</span></p>
-              <p>{job.summary}</p>
-              <ul class="job-projects">
-                {job.projects.map((id) => (
-                  <li><a href={url(`work/${id}/`)}>{titles.get(id)} <Icon name="arrow" size={14} /></a></li>
+      {journey.map((s, i) => (
+        <section class="j-sec" data-j-sec id={s.id} aria-labelledby={`${s.id}-t`}>
+          {s.id === "umpsa" && <span id="studies" class="anchor" />}
+          {s.id === "mimos" && <span id="experience" class="anchor" />}
+          <article class="j-card glass">
+            <p class="step mono"><span class="n">{String(i + 1).padStart(2, "0")}</span> {s.years}</p>
+            <h2 id={`${s.id}-t`}><Icon name={s.icon} size={22} /> {s.title}</h2>
+            <p class="org">{s.org}</p>
+            <p class="place mono">{s.place}</p>
+            <p class="summary">{s.summary}</p>
+            <ul class="did">{s.did.map((d) => <li>{d}</li>)}</ul>
+            {s.projects.length > 0 && (
+              <div class="projects">
+                {s.projects.filter((p) => titles.has(p)).map((p) => (
+                  <a class="chip" href={url(`work/${p}/`)}>{titles.get(p)} <Icon name="arrow" size={13} /></a>
                 ))}
-              </ul>
-            </li>
-          ))}
-        </ol>
-      </section>
+              </div>
+            )}
+            {s.id === "mimos" && (
+              <div class="now">
+                <p class="step mono"><span class="n">●</span> Currently working on</p>
+                <ul>{currently.map((c) => <li>{c}</li>)}</ul>
+              </div>
+            )}
+          </article>
+        </section>
+      ))}
 
-      <section id="now" class="reveal">
-        <span class="label">Now</span>
-        <h2>Currently working on</h2>
-        <article class="glass spot card">
-          <ul>{currently.map((c) => <li>{c}</li>)}</ul>
+      <section class="j-sec" data-j-sec id="contact" aria-labelledby="contact-t">
+        <article class="j-card glass contact">
+          <p class="kicker mono">Contact</p>
+          <h2 id="contact-t">Let's build something that moves.</h2>
+          <p class="summary">Interested in robotics, automation, autonomous systems or a collaboration? I'm happy to talk.</p>
+          <div class="actions">
+            <a class="btn primary" href={`mailto:${person.email}`}><Icon name="mail" size={17} /> {person.email}</a>
+          </div>
+          <div class="actions">
+            <a class="btn" href={url("work/")}>All my work <Icon name="arrow" size={16} /></a>
+            <a class="btn" href={url("skills/")}>Skills</a>
+            <a class="btn" href={url("work/#training")}>Training</a>
+          </div>
         </article>
       </section>
-
-      <section id="studies">
-        <span class="label reveal">Studies</span>
-        <h2 class="reveal">Education</h2>
-        <div class="stack">
-          {studies.map((s) => (
-            <article class="glass spot card reveal">
-              <div class="job-head"><h3>{s.school}</h3><span class="mono when">{s.period}</span></div>
-              <p class="job-role">{s.qualification}</p>
-              {s.notes.length > 0 && <ul>{s.notes.map((n) => <li>{n}</li>)}</ul>}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="contact" class="contact glass hud reveal">
-        <span class="label">Contact</span>
-        <h2 class="gradient-text">Let's build something that moves.</h2>
-        <p class="muted">Interested in robotics, autonomous vehicles or a collaboration? I'm happy to talk.</p>
-        <a class="btn primary" href={`mailto:${person.email}`}><Icon name="mail" size={17} /> {person.email}</a>
-      </section>
     </div>
-  </div>
+  </section>
 </Base>
 
 <style>
-  .page { display: grid; grid-template-columns: 300px 1fr; gap: 48px; padding-top: 110px; padding-bottom: 40px; align-items: start; }
-  .side { position: sticky; top: 96px; display: grid; gap: 18px; }
-  .profile { padding: 30px 24px; text-align: center; }
-  .intro-row { display: grid; grid-template-columns: 1fr 240px; gap: 28px; align-items: start; }
-  .field { margin: 6px 0 0; padding: 8px; border-radius: 18px; }
-  .field img { display: block; width: 100%; height: auto; border-radius: 12px; }
-  .field figcaption { font-size: 0.78rem; opacity: 0.7; text-align: center; padding-top: 6px; }
-  @media (max-width: 760px) { .intro-row { grid-template-columns: 1fr; } .field { max-width: 260px; } }
-  .avatar { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px; box-shadow: 0 0 0 3px rgb(var(--cyan-rgb) / 0.4), 0 0 40px rgb(var(--cyan-rgb) / 0.3); }
-  .profile h1 { font-size: 1.5rem; }
-  .role { color: var(--accent); font-size: 0.72rem; letter-spacing: 0.16em; margin: 6px 0 10px; }
-  .loc { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 0.88rem; }
-  .langs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; list-style: none; padding: 0; margin: 4px 0 18px; }
-  .langs .chip { font-size: 0.78rem; padding: 5px 10px; }
-  .links { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-  .links .btn { min-height: 40px; padding: 0 14px; font-size: 0.88rem; }
-  .toc { display: grid; gap: 2px; padding-left: 8px; }
-  .toc a { color: var(--muted); text-decoration: none; font-size: 0.9rem; padding: 6px 12px; border-left: 1px solid var(--glass-border); transition: color 0.2s, border-color 0.2s; }
-  .toc a:hover { color: var(--text); border-color: var(--accent); }
+  .journey { position: relative; }
+  .j-stage { position: fixed; inset: 0; z-index: 0; background: linear-gradient(180deg, #9fb9c9, #dfe6da); }
+  :global([data-theme="dark"]) .j-stage { background: linear-gradient(180deg, #0b1322, #1b2230); }
+  .j-stage :global(.w3-canvas) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .j-loading { position: absolute; left: 60%; top: 50%; transform: translate(-50%, -50%); margin: 0; font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  :global(.j3-ready) .j-loading, :global(.j3-off) .j-loading { display: none; }
+  :global(.j3-off) .j-stage { background: radial-gradient(ellipse 70% 60% at 65% 50%, rgb(var(--cyan-rgb) / 0.12), transparent 70%), var(--bg); }
+  .j-scrim { position: fixed; inset: 0 auto 0 0; width: 56%; z-index: 1; pointer-events: none; background: linear-gradient(90deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 80%, transparent) 30%, transparent 100%); opacity: 0.9; }
 
-  .content { display: grid; gap: 72px; min-width: 0; }
-  .contact { padding: clamp(28px, 5vw, 48px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .contact h2 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.6rem); }
-  .contact p { margin: 0 0 8px; }
-  section { scroll-margin-top: 90px; }
-  section > h2 { font-size: clamp(1.7rem, 3.4vw, 2.3rem); margin: 12px 0 24px; }
-  h2.big { font-size: clamp(2.4rem, 6vw, 3.8rem); margin: 14px 0 22px; }
-  .lead { font-size: 1.08rem; color: var(--muted); max-width: 65ch; }
+  .j-me { position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none; transition: opacity 0.4s; }
+  .j-me .in { display: block; transform: translate(-50%, -100%); }
+  .j-me img { display: block; width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--cyan); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35); object-fit: cover; }
 
-  .timeline { list-style: none; padding: 0 0 0 26px; margin: 0; display: grid; gap: 18px; position: relative; }
-  .timeline::before { content: ""; position: absolute; left: 6px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(var(--cyan), var(--violet), transparent); opacity: 0.6; }
-  .job, .card { padding: 22px 24px; }
-  .job::before { content: ""; position: absolute; left: -26px; top: 28px; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 2px solid var(--cyan); }
-  .job.current::before { background: var(--cyan); box-shadow: 0 0 16px var(--cyan); animation: ping 2s ease-out infinite; }
-  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgb(var(--cyan-rgb) / 0.6); } 100% { box-shadow: 0 0 0 14px transparent; } }
-  .job-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .job-head h3 { font-size: 1.2rem; }
-  .when { font-size: 0.78rem; color: var(--accent); letter-spacing: 0.04em; }
-  .job-role { color: var(--text); opacity: 0.9; margin: 4px 0 10px; font-size: 0.95rem; }
-  .job ul, .card ul { margin: 0; padding-left: 1.1em; color: var(--muted); }
-  .job li, .card li { margin-bottom: 4px; }
-  .stack { display: grid; gap: 16px; }
-  .card h3 { font-size: 1.1rem; margin-bottom: 12px; }
-  .card .job-head h3 { margin: 0; }
+  .j-flow { position: relative; z-index: 2; }
+  .j-sec { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; padding: 90px clamp(16px, 4vw, 64px); }
+  .j-card { width: min(470px, 100%); padding: 26px 28px; border-radius: 22px; transition: opacity 0.5s, transform 0.5s; }
+  :global(.j3-ready) .j-sec:not(.on) .j-card { opacity: 0.35; transform: translateY(14px); }
+  .kicker { margin: 0 0 12px; font-size: 0.74rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
+  .kicker span { color: var(--faint); }
+  .j-intro h1 { font-size: clamp(2rem, 3.6vw, 2.8rem); line-height: 1.02; letter-spacing: -0.03em; margin: 0 0 6px; }
+  .who { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+  .avatar { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 0 0 3px rgb(var(--cyan-rgb) / 0.4), 0 0 30px rgb(var(--cyan-rgb) / 0.3); }
+  .who .place { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
+  .lead { color: var(--muted); margin: 0 0 12px; line-height: 1.6; font-size: 0.95rem; }
+  .lead :global(strong) { color: var(--text); }
+  .langs { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0 0 10px; }
+  .langs .chip { font-size: 0.72rem; padding: 4px 9px; }
+  .links { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .links .btn { min-height: 38px; padding: 0 13px; font-size: 0.85rem; }
+  .now { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--glass-border); }
+  .now ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+  .now .n { color: var(--accent); animation: j-blink 1.6s ease-in-out infinite; }
+  .contact h2 { display: block; font-size: clamp(1.6rem, 3vw, 2.2rem); }
+  .anchor { position: absolute; top: 0; }
+  .j-sec { position: relative; }
+  @keyframes j-blink { 50% { opacity: 0.3; } }
+  .hint { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .hint :global(svg) { transform: rotate(90deg); animation: j-bob 1.6s ease-in-out infinite; }
+  .step { margin: 0 0 8px; font-size: 0.74rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .step .n { color: var(--accent); margin-right: 6px; }
+  h2 { display: flex; align-items: center; gap: 10px; font-size: clamp(1.4rem, 2.4vw, 1.9rem); line-height: 1.15; margin: 0 0 10px; }
+  h2 :global(svg) { color: var(--accent); flex: none; }
+  .org { margin: 0; font-weight: 600; }
+  .place { margin: 4px 0 14px; font-size: 0.74rem; color: var(--faint); letter-spacing: 0.04em; }
+  .summary { margin: 0 0 12px; color: var(--muted); line-height: 1.6; }
+  .did { margin: 0 0 16px; padding-left: 18px; color: var(--text); line-height: 1.55; font-size: 0.94rem; }
+  .did li + li { margin-top: 5px; }
+  .did li::marker { color: var(--accent); }
+  .projects { display: flex; flex-wrap: wrap; gap: 6px; }
+  .projects .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; text-decoration: none; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 
-  .job .job-projects { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
-  .job-projects a { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--clay-sunk); color: var(--accent); font-weight: 600; font-size: 0.9rem; text-decoration: none; }
-  .job-projects a:hover { box-shadow: var(--glow); }
-  .job .job-projects li { margin: 0; }
-  .cert-name { margin: 0; font-weight: 500; }
-  .small { font-size: 0.85rem; margin: 4px 0 0; }
+  .j-rail { position: fixed; right: clamp(12px, 2vw, 28px); top: 50%; transform: translateY(-50%); z-index: 3; display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: 18px; }
+  .j-rail::before { content: ""; position: absolute; left: 50%; top: 22px; bottom: 22px; width: 1px; background: var(--glass-border); }
+  .j-dot { position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 8px; height: 30px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--muted); }
+  .j-dot::after { content: ""; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--glass-border); background: var(--bg); transition: transform 0.25s, background 0.25s, border-color 0.25s; }
+  .j-dot span { font-size: 0.66rem; letter-spacing: 0.08em; opacity: 0; transform: translateX(6px); transition: opacity 0.25s, transform 0.25s; white-space: nowrap; }
+  .j-dot:hover span, .j-dot.on span { opacity: 1; transform: none; }
+  .j-dot.on { color: var(--text); }
+  .j-dot.on::after { background: var(--accent); border-color: var(--accent); transform: scale(1.25); box-shadow: 0 0 12px var(--accent); }
+
+  .j-live { position: fixed; right: clamp(12px, 2vw, 28px); bottom: 18px; z-index: 3; display: inline-flex; align-items: center; gap: 7px; margin: 0; padding: 8px 14px; border-radius: 999px; font-size: 0.68rem; letter-spacing: 0.06em; color: var(--muted); }
+  .j-live .sep { color: var(--faint); }
+  .j-live .live { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+  @keyframes j-bob { 50% { transform: rotate(90deg) translateX(4px); } }
 
   @media (max-width: 900px) {
-    .page { grid-template-columns: 1fr; padding-top: 80px; }
-    .side { position: static; }
-    .toc { display: none; }
+    .j-scrim { inset: auto 0 0 0; width: 100%; height: 60%; background: linear-gradient(0deg, var(--bg) 10%, transparent); }
+    .j-sec { align-items: flex-end; padding: 80px 12px 110px; }
+    .j-card { padding: 18px 18px; }
+    .j-rail { top: 76px; transform: none; padding: 4px; }
+    .j-dot span { display: none; }
+    .j-live { bottom: auto; top: 14px; right: 12px; }
+    .did { font-size: 0.86rem; margin-bottom: 10px; }
+    .summary { font-size: 0.9rem; margin-bottom: 10px; }
+    .lead { font-size: 0.88rem; }
+    .projects { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .projects .chip { flex: none; }
+    .j-rail { top: 64px; }
+    .j-live { left: 12px; right: auto; max-width: calc(100% - 24px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .j-card, .hint :global(svg) { transition: none; animation: none; }
   }
 </style>
