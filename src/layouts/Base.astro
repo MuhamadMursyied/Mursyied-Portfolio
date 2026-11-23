@@ -59,7 +59,10 @@ const year = new Date().getFullYear();
         root.classList.add("js");
         var saved = null;
         try { saved = localStorage.getItem("theme"); } catch (e) {}
-        root.dataset.theme = saved === "dark" ? "dark" : "light";
+        // no choice saved yet: follow the time in Malaysia (dark from 7 pm to 7 am)
+        var myt = (new Date().getUTCHours() + 8) % 24;
+        var auto = myt >= 19 || myt < 7 ? "dark" : "light";
+        root.dataset.theme = saved === "dark" || saved === "light" ? saved : auto;
       })();
     </script>
     <ClientRouter />

@@ -5,6 +5,7 @@
 //   drift, a live Malaysia clock and the current weather in Rawang (Open-Meteo, no key needed)
 
 import { robot } from "../iso";
+import { url } from "../utils";
 
 const LAT = 3.32;
 const LON = 101.58;
@@ -26,12 +27,50 @@ export function initWorld(): (() => void) | undefined {
   });
 
   const home = document.querySelector<HTMLElement>("[data-home]");
-  const camera = home ? setupCamera(home, root) : null;
   if (home) {
     cleanups.push(startClock(home));
     loadWeather(home);
     boot(home, reducedMotion);
   }
+
+  // The full-screen home page gets the real 3D world; the drawn map stays as the fallback.
+  if (home && webgl()) {
+    let stop3d: (() => void) | undefined;
+    let gone = false;
+    home.classList.add("w3-loading"); // hide the drawn map while the 3D world loads
+    import("./world3d")
+      .then(({ startWorld3D }) => {
+        if (gone) return;
+        stop3d = startWorld3D(home, root, { reducedMotion, baseUrl: url });
+        home.classList.remove("w3-loading");
+        const hint = home.querySelector(".hud-band .hint");
+        if (hint) hint.textContent = "Drag to look around · Scroll to zoom · Click a building to explore";
+      })
+      .catch((err) => {
+        console.warn("3D world unavailable, using the map", err);
+        home.classList.remove("w3-loading");
+        if (!gone) cleanups.push(draw2d(root, home, reducedMotion));
+      });
+    cleanups.push(() => { gone = true; stop3d?.(); });
+  } else {
+    cleanups.push(draw2d(root, home, reducedMotion));
+  }
+
+  return () => cleanups.forEach((fn) => fn());
+}
+
+function webgl() {
+  try {
+    return !!document.createElement("canvas").getContext("webgl2");
+  } catch {
+    return false;
+  }
+}
+
+// The drawn isometric map: robot loop and (on the home page) camera controls.
+function draw2d(root: HTMLElement, home: HTMLElement | null, reducedMotion: boolean) {
+  const cleanups: (() => void)[] = [];
+  const camera = home ? setupCamera(home, root) : null;
 
   // ---------- the robot: a small oval on the road between me and Career HQ ----------
   // (that spot has no building in front of it, so the robot is never hidden)
@@ -177,12 +216,19 @@ function setupCamera(home: HTMLElement, root: HTMLElement) {
   };
 }
 
-// ---------- live clock in Malaysia time ----------
+// ---------- live clock in the visitor's place (Malaysia until we know where they are) ----------
 function startClock(home: HTMLElement) {
   const clockEl = home.querySelector<HTMLElement>("[data-hud-clock]");
   const partEl = home.querySelector<HTMLElement>("[data-hud-tod]");
-  const format = new Intl.DateTimeFormat("en-GB", { timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+  let zone = "";
+  let format: Intl.DateTimeFormat | null = null;
   const tick = () => {
+    const tz = home.dataset.tz || TIME_ZONE;
+    if (tz !== zone || !format) {
+      zone = tz;
+      try { format = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }); }
+      catch { format = new Intl.DateTimeFormat("en-GB", { timeZone: TIME_ZONE, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }); }
+    }
     const text = format.format(new Date());
     if (clockEl) clockEl.textContent = text;
     const hour = Number(text.slice(0, 2));
@@ -195,8 +241,63 @@ function startClock(home: HTMLElement) {
   return () => clearInterval(timer);
 }
 
-// ---------- current weather in Rawang ----------
+// ---------- where the visitor is ----------
+// 1. a place they shared before with "Use my location" (exact, e.g. "Bukit Jalil, Kuala Lumpur")
+// 2. otherwise a rough guess from their internet connection (city level, no permission prompt)
+// 3. otherwise Rawang, where I am
+type Place = { lat: number; lon: number; name: string; precise: boolean };
+const HOME_PLACE: Place = { lat: LAT, lon: LON, name: "Rawang, Selangor", precise: false };
+
+const store = {
+  get(area: Storage | undefined, key: string) { try { return JSON.parse(area?.getItem(key) || "null"); } catch { return null; } },
+  set(area: Storage | undefined, key: string, value: unknown) { try { area?.setItem(key, JSON.stringify(value)); } catch { /* storage blocked */ } },
+};
+const local = () => { try { return localStorage; } catch { return undefined; } };
+const session = () => { try { return sessionStorage; } catch { return undefined; } };
+
+async function guessPlace(): Promise<Place> {
+  const saved = store.get(local(), "place") as Place | null;
+  if (saved?.precise) return saved;
+  const cached = store.get(session(), "ipPlace") as Place | null;
+  if (cached) return cached;
+  try {
+    const res = await fetch("https://api.bigdatacloud.net/data/reverse-geocode-client?localityLanguage=en");
+    const d = await res.json();
+    if (typeof d.latitude === "number" && (d.latitude || d.longitude)) {
+      const town = d.locality || d.city;
+      const name = [town, d.countryName].filter(Boolean).join(", ") || "Your area";
+      const place = { lat: d.latitude, lon: d.longitude, name, precise: false };
+      store.set(session(), "ipPlace", place);
+      return place;
+    }
+  } catch { /* offline or blocked */ }
+  return HOME_PLACE;
+}
+
+function exactPlace(): Promise<Place> {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) return reject(new Error("unsupported"));
+    navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+      const lat = coords.latitude, lon = coords.longitude;
+      let name = `${lat.toFixed(2)}, ${lon.toFixed(2)}`;
+      try {
+        // OpenStreetMap knows neighbourhoods such as "Bukit Jalil"
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=jsonv2&zoom=16&accept-language=en`);
+        const a = (await res.json()).address || {};
+        const area = a.suburb || a.neighbourhood || a.quarter || a.village || a.town;
+        const city = a.city || a.town || a.county || a.state;
+        name = [area, city !== area ? city : null].filter(Boolean).join(", ") || name;
+      } catch { /* keep the coordinates as the name */ }
+      const place = { lat, lon, name, precise: true };
+      store.set(local(), "place", place);
+      resolve(place);
+    }, reject, { enableHighAccuracy: false, timeout: 15000, maximumAge: 10 * 60 * 1000 });
+  });
+}
+
+// ---------- current weather where the visitor is ----------
 type Weather = { temperature_2m: number; relative_humidity_2m: number; wind_speed_10m: number; precipitation: number; weather_code: number };
+type Forecast = { current: Weather; timezone: string; timezone_abbreviation: string; utc_offset_seconds: number };
 
 function describe(code: number) {
   if (code === 0) return "Clear sky";
@@ -210,36 +311,70 @@ function describe(code: number) {
   return "Cloudy";
 }
 
+function coords(lat: number, lon: number) {
+  return `${Math.abs(lat).toFixed(2)}° ${lat >= 0 ? "N" : "S"} ${Math.abs(lon).toFixed(2)}° ${lon >= 0 ? "E" : "W"}`;
+}
+
 async function loadWeather(home: HTMLElement) {
   const set = (key: string, text: string) => {
     const el = home.querySelector<HTMLElement>(`[data-w=${key}]`);
     if (el) el.textContent = text;
   };
-  const show = (w: Weather) => {
+  const placeEl = home.querySelector<HTMLElement>("[data-hud-place]");
+  const coordsEl = home.querySelector<HTMLElement>("[data-hud-coords]");
+  const locate = home.querySelector<HTMLButtonElement>("[data-locate]");
+
+  const show = (place: Place, f: Forecast) => {
+    const w = f.current;
     set("temp", `${Math.round(w.temperature_2m)}°C`);
     set("cond", describe(w.weather_code));
     set("wind", `${Math.round(w.wind_speed_10m)} km/h`);
     set("hum", `${Math.round(w.relative_humidity_2m)}%`);
     set("rain", `${w.precipitation.toFixed(1)} mm`);
-    set("status", "Live · Open-Meteo");
+    set("status", place.precise ? "Your location · live" : place === HOME_PLACE ? "Rawang · live" : "Near you · live");
+    if (placeEl) placeEl.textContent = `${place.name} · ${f.timezone_abbreviation}`;
+    if (coordsEl) coordsEl.textContent = coords(place.lat, place.lon);
+    if (locate) locate.hidden = place.precise;
     home.classList.add("has-weather");
+    Object.assign(home.dataset, {
+      wcode: String(w.weather_code),
+      wrain: String(w.precipitation),
+      lat: String(place.lat),
+      lon: String(place.lon),
+      tz: f.timezone,
+      utcoff: String(f.utc_offset_seconds),
+    });
+    home.dispatchEvent(new Event("weather"));
   };
-  // keep it for 15 minutes so moving between tabs doesn't refetch
-  try {
-    const cached = JSON.parse(sessionStorage.getItem("weather") || "null");
-    if (cached && Date.now() - cached.at < 15 * 60 * 1000) return show(cached.data);
-  } catch { /* storage blocked */ }
-  try {
-    const query = `latitude=${LAT}&longitude=${LON}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weather_code&timezone=${encodeURIComponent(TIME_ZONE)}`;
-    const res = await fetch(`https://api.open-meteo.com/v1/forecast?${query}`);
-    if (!res.ok) throw new Error(String(res.status));
-    const data = (await res.json()).current as Weather;
-    show(data);
-    try { sessionStorage.setItem("weather", JSON.stringify({ at: Date.now(), data })); } catch { /* storage blocked */ }
-  } catch {
-    set("cond", "Weather unavailable");
-    set("status", "Offline");
+
+  const fetchFor = async (place: Place) => {
+    // keep it for 15 minutes per place so moving between tabs doesn't refetch
+    const key = `weather:${place.lat.toFixed(2)},${place.lon.toFixed(2)}`;
+    const cached = store.get(session(), key);
+    if (cached && Date.now() - cached.at < 15 * 60 * 1000) return show(place, cached.data);
+    try {
+      const query = `latitude=${place.lat}&longitude=${place.lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weather_code&timezone=auto`;
+      const res = await fetch(`https://api.open-meteo.com/v1/forecast?${query}`);
+      if (!res.ok) throw new Error(String(res.status));
+      const data = (await res.json()) as Forecast;
+      show(place, data);
+      store.set(session(), key, { at: Date.now(), data });
+    } catch {
+      set("cond", "Weather unavailable");
+      set("status", "Offline");
+    }
+  };
+
+  if (locate) {
+    locate.onclick = async () => {
+      locate.disabled = true;
+      set("status", "Finding you…");
+      try { await fetchFor(await exactPlace()); }
+      catch { set("status", "Location not shared · showing your area"); }
+      finally { locate.disabled = false; }
+    };
   }
+  await fetchFor(await guessPlace());
 }
 
 // ---------- "assembling my little world" intro, once per visit ----------

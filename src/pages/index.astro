@@ -36,10 +36,10 @@ const [town, state] = person.location.split(", ");
       </div>
     </div>
 
-    <aside class="hud-time glass" aria-label="Local time and weather in Rawang">
+    <aside class="hud-time glass" aria-label="Local time and weather where you are">
       <div class="time-row">
         <div>
-          <p class="hud-label mono">Malaysia · MYT · UTC+8</p>
+          <p class="hud-label mono" data-hud-place>Malaysia · MYT · UTC+8</p>
           <p class="big-clock mono" data-hud-clock>--:--:--</p>
         </div>
         <p class="tod mono"><span class="live"></span><span data-hud-tod>Live</span></p>
@@ -52,6 +52,7 @@ const [town, state] = person.location.split(", ");
           <div><dt>Rain</dt><dd data-w="rain">—</dd></div>
         </dl>
         <p class="hud-foot mono"><span data-w="status">Fetching current conditions</span> · <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>
+        <button type="button" class="locate mono" data-locate><Icon name="target" size={13} /> Use my location</button>
       </div>
     </aside>
 
@@ -68,7 +69,7 @@ const [town, state] = person.location.split(", ");
     <footer class="hud-band mono">
       <span><b>{person.firstName.toUpperCase()} DIGITAL WORLD</b> · PORTFOLIO / ISO</span>
       <span class="hint">Drag to move · Scroll to zoom · Click a building to explore</span>
-      <span>3.32° N 101.58° E</span>
+      <span data-hud-coords>3.32° N 101.58° E</span>
     </footer>
 
     <div class="boot" data-boot aria-hidden="true">
@@ -90,6 +91,8 @@ const [town, state] = person.location.split(", ");
   .stage :global(svg) { cursor: grab; touch-action: none; }
   .stage :global(svg.dragging) { cursor: grabbing; }
   .scrim { position: absolute; inset: 0 auto 0 0; width: 46%; pointer-events: none; background: linear-gradient(90deg, var(--bg) 10%, transparent); opacity: 0.75; }
+  /* over the 3D world the text needs a calmer backdrop */
+  :global(.w3-ready) .scrim { width: 60%; opacity: 0.94; background: linear-gradient(90deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 92%, transparent) 30%, color-mix(in srgb, var(--bg) 55%, transparent) 46%, transparent 100%); }
 
   /* ---------- title block (top left) ---------- */
   .hud-title { position: absolute; left: clamp(20px, 4vw, 64px); top: 50%; transform: translateY(-50%); width: min(560px, 42vw); z-index: 2; }
@@ -125,6 +128,10 @@ const [town, state] = person.location.split(", ");
   dd { margin: 2px 0 0; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
   .hud-foot { margin: 10px 0 0; font-size: 0.62rem; color: var(--faint); letter-spacing: 0.06em; }
   .hud-foot a { color: var(--muted); }
+  .locate { display: inline-flex; align-items: center; gap: 6px; margin: 10px 0 0; padding: 6px 11px; border-radius: 999px; border: 1px solid var(--glass-border); background: var(--glass-strong); color: var(--accent); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+  .locate:hover { border-color: var(--accent); }
+  .locate[hidden] { display: none; }
+  .locate:disabled { opacity: 0.6; cursor: wait; }
 
   /* ---------- map controls (bottom right) ---------- */
   .hud-controls { position: absolute; right: clamp(16px, 2.5vw, 40px); bottom: 64px; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 10px; }
