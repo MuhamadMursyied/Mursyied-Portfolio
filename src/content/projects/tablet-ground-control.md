@@ -4,6 +4,8 @@ date: "2026"
 org: "MIMOS Berhad"
 summary: "Before, running the robot needed a laptop and typed commands. Now an operator starts a full field mission from a tablet, and can take over or stop it with one tap."
 tags: ["ROS 2", "Nav2", "Flask", "JavaScript", "Robotics"]
+employer: true
+credits: "Satellite map imagery © Google and its imagery providers."
 featured: true
 videos:
   - src: "videos/tablet-ground-control-real.mp4"

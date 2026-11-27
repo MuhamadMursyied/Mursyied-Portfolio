@@ -4,6 +4,7 @@ date: "2025"
 org: "SD Guthrie"
 summary: "Fitted new sensors and cameras onto a test robot: designed and 3D-printed the mounts, changed the frame and set the cameras up so it can be driven remotely."
 tags: ["Robotics", "Mechanical design", "ROS 2"]
+employer: true
 featured: true
 images:
   - "images/projects/husky-ugv-1.jpg"

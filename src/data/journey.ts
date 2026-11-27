@@ -67,7 +67,7 @@ export const journey: Stop[] = [
     icon: "ugv",
     summary: "Fitted sensors, tested radio links and drove field trials for robots that work on palm estates.",
     did: [
-      "a driverless fertiliser spreader. Tested its long-range radio and drove it in field trials",
+      "A driverless fertiliser spreader for palm estates. Tested its long-range radio and drove it in field trials",
       "Husky UGV: designed and 3D-printed the sensor and camera mounts",
       "Trained an AI model to find and count palm crowns in images",
     ],

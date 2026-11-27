@@ -4,6 +4,7 @@ date: "2026"
 org: "MIMOS Berhad"
 summary: "The robot thought tall grass was a wall and refused to drive through it. Now it drives through grass but still stops for trees."
 tags: ["ROS 2", "Nav2", "LiDAR", "Computer vision", "Robotics"]
+employer: true
 featured: true
 video: "videos/vegetation-aware-perception.mp4"
 images:

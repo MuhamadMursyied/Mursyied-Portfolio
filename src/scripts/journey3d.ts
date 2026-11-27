@@ -369,18 +369,18 @@ function guthrie(g: THREE.Group, kit: Kit): Scene {
       if (z > 10 && Math.abs(px) < 55) crowns.push(new THREE.Vector3(px, 7.4, z));
     }
   }
-  // a driverless fertiliser spreader with a hopper and a spinner at the back
-  const roc = new THREE.Group();
+  // A driverless fertiliser spreader with a hopper and a spinner at the back
+  const spreader = new THREE.Group();
   const yellow = kit.plastic(0xe0a020, 0.45);
-  roc.add(block(3.6, 0.6, 1.8, kit.darkMetal, kit.darkMetal, 10, 10, 0.55));
-  for (const [x, z] of [[1.2, 1], [1.2, -1], [-1.2, 1], [-1.2, -1]]) { const w = mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.4, 16).rotateX(Math.PI / 2), kit.tyre); w.position.set(x, 0.55, z); roc.add(w); }
-  roc.add(mesh(new THREE.CylinderGeometry(1.25, 0.5, 1.4, 4, 1).rotateY(Math.PI / 4).translate(-0.3, 1.9, 0), yellow));
+  spreader.add(block(3.6, 0.6, 1.8, kit.darkMetal, kit.darkMetal, 10, 10, 0.55));
+  for (const [x, z] of [[1.2, 1], [1.2, -1], [-1.2, 1], [-1.2, -1]]) { const w = mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.4, 16).rotateX(Math.PI / 2), kit.tyre); w.position.set(x, 0.55, z); spreader.add(w); }
+  spreader.add(mesh(new THREE.CylinderGeometry(1.25, 0.5, 1.4, 4, 1).rotateY(Math.PI / 4).translate(-0.3, 1.9, 0), yellow));
   const spinner = mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.06, 12).translate(-2.0, 0.9, 0), kit.metal);
-  roc.add(spinner);
-  roc.add(mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.2, 12).translate(1.7, 1.3, 0), kit.plastic(0x333333)));
-  roc.add(mesh(rod(new THREE.Vector3(0.8, 1.15, 0.6), new THREE.Vector3(0.8, 3.4, 0.6), 0.03), kit.darkMetal));
-  roc.add(kit.beacon(0.8, 3.5, 0.6, 0.12));
-  g.add(roc);
+  spreader.add(spinner);
+  spreader.add(mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.2, 12).translate(1.7, 1.3, 0), kit.plastic(0x333333)));
+  spreader.add(mesh(rod(new THREE.Vector3(0.8, 1.15, 0.6), new THREE.Vector3(0.8, 3.4, 0.6), 0.03), kit.darkMetal));
+  spreader.add(kit.beacon(0.8, 3.5, 0.6, 0.12));
+  g.add(spreader);
   // fertiliser granules thrown by the spinner
   const N = 500;
   const sprayPos = new Float32Array(N * 3), vel = new Float32Array(N * 3), life = new Float32Array(N);
@@ -443,12 +443,12 @@ function guthrie(g: THREE.Group, kit: Kit): Scene {
     pose: { pos: new THREE.Vector3(12, 62, 92), target: new THREE.Vector3(0, 2, -6) },
     me: new THREE.Vector3(63, 0.05, 13),
     update: (dt, t) => {
-      // the refill bin drives up and down the estate road, spreading as it goes
+      // the spreader drives up and down the estate road, spreading as it goes
       rx += dir * dt * 3.2;
       if (rx > 70) { rx = 70; dir = -1; }
       if (rx < -70) { rx = -70; dir = 1; }
-      roc.position.set(rx, 0.05, roadZ);
-      roc.rotation.y = dir > 0 ? 0 : Math.PI;
+      spreader.position.set(rx, 0.05, roadZ);
+      spreader.rotation.y = dir > 0 ? 0 : Math.PI;
       spinner.rotation.y += dt * 20;
       antenna.set(0.8 * dir + rx, 3.4, roadZ + 0.6 * dir).add(g.position);
       const back = new THREE.Vector3(-2.0 * dir + rx, 0.95, roadZ);

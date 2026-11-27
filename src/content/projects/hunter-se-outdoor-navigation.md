@@ -4,6 +4,8 @@ date: "2026"
 org: "MIMOS Berhad"
 summary: "I make a robot drive itself outdoors. I fixed two things: it now knows exactly where it is, and it drives its route smoothly."
 tags: ["ROS 2", "Nav2", "MPPI", "GNSS", "Robotics"]
+employer: true
+credits: "Map data © OpenStreetMap contributors, imagery © Mapbox (GNSS receiver screens)."
 featured: true
 videos:
   - src: "videos/hunter-se-outdoor-navigation-real.mp4"
@@ -14,10 +16,6 @@ images:
   - "images/projects/hunter-se-outdoor-navigation-2.jpg"
   - "images/projects/hunter-se-outdoor-navigation-3.jpg"
   - "images/projects/hunter-se-outdoor-navigation-4.jpg"
-  - "images/projects/hunter-se-outdoor-navigation-5.jpg"
-  - "images/projects/hunter-se-outdoor-navigation-6.jpg"
-  - "images/projects/hunter-se-outdoor-navigation-7.jpg"
-  - "images/projects/hunter-se-outdoor-navigation-8.jpg"
   - "images/projects/hunter-se-outdoor-navigation-9.jpg"
   - "images/projects/hunter-se-outdoor-navigation-10.jpg"
 ---
